@@ -25,8 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $books = Book::where('userid', Auth::id())
-        ->get();
+        $books = \App\models\Book::where('userid', Auth::id())->get();
         $books->toArray();
         return view('home',compact('books'));
     }
