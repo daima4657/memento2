@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Book;
+use app\models\Book;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -25,7 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $books = \App\models\Book::where('userid', Auth::id())->get();
+        $books = Book::where('userid', Auth::id())->get();
         $books->toArray();
         return view('home',compact('books'));
     }
