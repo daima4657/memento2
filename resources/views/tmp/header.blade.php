@@ -15,14 +15,17 @@
 	<title>{{ config('app.name', 'Laravel') }}@yield('title')</title>
 
 	<!-- Styles -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
 	<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 	<link href="{{ asset('css/common.css') }}" rel="stylesheet">
 
+	<script src="{{ asset('js/Sortable.js') }}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.js"></script>
 	<!-- jQuery読み込み -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<!-- BootstrapのJS読み込み -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	
+	<script src="https://kit.fontawesome.com/7fd5f1a720.js" crossorigin="anonymous"></script>
 </head>
 
   <!-- Branding Image -->

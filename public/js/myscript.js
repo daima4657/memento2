@@ -105,8 +105,15 @@ $(function(){
   $(document).on('click','.js_navButton',function(){
     scrollBlocker(true);
     $('body').addClass('js_navOpen');
+
     var target_id = $(this).parent(".bl_tableBlock_tr").data('id');
-    $('.bl_navBlock input[name="user_id"]').val(target_id);
+    $('input#detail-id').val(target_id);
+    console.log( target_id);
+    //console.log( $('input#detail-id').val());
+
+    $('#detail-id').attr('value',target_id);
+
+    $('.bl_navBlock').attr('data-id',target_id);
     ajaxGetter('/ajax_getData_by_id',target_id);//表示する情報の取得
     setTimeout(function(){
       focusFlag = true;
@@ -123,6 +130,9 @@ $(function(){
     if (!$(event.target).closest('.bl_navBlock,.js_navButton').length && focusFlag) {
       focusFlag = false;
       scrollBlocker(false);
+      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
+      $('input[type=file]').val('');
+      console.log($('#update-book-image').prop('files')[0]);
       $('body').removeClass('js_navOpen');
     }
   });
@@ -192,6 +202,7 @@ function ajaxReload(message){
 //ajaxでデータベースに情報を追加する
 
 function ajaxSetter(url,form,ary_lists){
+  console.log(form);
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
             // 成功
@@ -224,8 +235,9 @@ function ajaxSetter(url,form,ary_lists){
             //dataType: 'json'
         })
         .done(function( data ) {
-          console.log(data);
           //location.reload();
+          form.reset(); //処理が終わったフォームの入力内容をクリア
+
           ajaxReload(ary_lists.message);
 
         })
@@ -304,14 +316,8 @@ function ajaxGetter(directly,target){
         dataType: 'json'
     })
     .done(function( data ) {
-      var image_url = data[0][0]['image_path'] == "notset" ? "image/noimage.jpg" : "storage/image/"+data[0][0]['image_path'];
-      $('#detail-ttl').val(data[0][0]['title']);
-      $('#detail-desc').val(data[0][0]['memo']);
-      $('#detail-img').css("background-image","url("+image_url+")");
-      $('.bl_navBlock_data_lastupdate_date').html(data[0][0]['updated_at']);
-
-      //location.reload();
-      //ajaxReload('メモリーを追加しました！');
+      console.log(data);
+      rewriteDetailData(data);
     })
     .fail(function( data ) {
       console.log(data);
@@ -322,3 +328,122 @@ function ajaxGetter(directly,target){
     });
     //console.log(jqxhr);
 }
+
+//詳細情報個所を再描画する
+function rewriteDetailData(data){
+  var image_url = data[0][0]['image_path'] == "notset" ? "image/noimage.jpg" : "storage/image/"+data[0][0]['image_path'];
+  $('#detail-ttl').val(data[0][0]['title']);
+  $('#detail-desc').val(data[0][0]['memo']);
+  $('#dropzone2 .bl_imageDrop_icon').remove();
+  if($('#dropzone2 .bl_imageDrop_wrapper > img').length == 0){
+    $('#dropzone2 .bl_imageDrop_wrapper').append('<img class="op_thumbnail" src="'+image_url+'">');
+  }
+  $('.bl_navBlock_data_lastupdate_date').html(data[0][0]['last_update_date']);
+}
+
+
+$(function() {
+  
+  $('#dropzone').on('dragover', function() {
+    $(this).addClass('hover');
+  });
+  
+  $('#dropzone').on('dragleave', function() {
+    $(this).removeClass('hover');
+  });
+  
+  $('#dropzone input').on('change', function(e) {
+    var file = this.files[0];
+
+    $('#dropzone').removeClass('hover');
+    
+    if (this.accept && $.inArray(file.type, this.accept.split(/, ?/)) == -1) {
+      return alert('この形式のファイルはアップロードできません.');
+    }
+    
+    $('#dropzone').addClass('dropped');
+    $('#dropzone img').remove();
+    
+    if ((/^image\/(gif|png|jpeg)$/i).test(file.type)) {
+      var reader = new FileReader(file);
+
+      reader.readAsDataURL(file);
+      
+      reader.onload = function(e) {
+        var data = e.target.result,
+            $img = $('<img />').attr('src', data).fadeIn();
+        
+        $('#dropzone div').html($img);
+      };
+    } else {
+      var ext = file.name.split('.').pop();
+      
+      $('#dropzone div').html(ext);
+    }
+  });
+});
+
+$(function() {
+  
+  $('#dropzone2').on('dragover', function() {
+    $(this).addClass('hover');
+  });
+  
+  $('#dropzone2').on('dragleave', function() {
+    $(this).removeClass('hover');
+  });
+  
+  $('#dropzone2 input').on('change', function(e) {
+    var file = this.files[0];
+
+    $('#dropzone2').removeClass('hover');
+    
+    if (this.accept && $.inArray(file.type, this.accept.split(/, ?/)) == -1) {
+      return alert('この形式のファイルはアップロードできません.');
+    }
+    
+    $('#dropzone2').addClass('dropped');
+    $('#dropzone2 img').remove();
+    
+    if ((/^image\/(gif|png|jpeg)$/i).test(file.type)) {
+      var reader = new FileReader(file);
+
+      reader.readAsDataURL(file);
+      
+      reader.onload = function(e) {
+        var data = e.target.result,
+            $img = $('<img />').attr('src', data).fadeIn();
+        
+        $('#dropzone2 div').html($img);
+      };
+    } else {
+      var ext = file.name.split('.').pop();
+      
+      $('#dropzone2 div').html(ext);
+    }
+  });
+});
+
+
+Dropzone.options.updateDataForm = {
+    autoProcessQueue: false,
+
+    init: function (e) {
+
+        var myDropzone = this;
+
+        $('#btn_upload').on("click", function() {
+            myDropzone.processQueue(); // Tell Dropzone to process all queued files.
+        });
+
+        // Event to send your custom data to your server
+        myDropzone.on("sending", function(file, xhr, data) {
+
+            // First param is the variable name used server side
+            // Second param is the value, you can add what you what
+            // Here I added an input value
+            data.append("your_variable", $('#your_input').val());
+        });
+
+    }
+};

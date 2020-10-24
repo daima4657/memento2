@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+//タイムゾーンを日本にあわせる
+date_default_timezone_set('Asia/Tokyo');
+
 class FormController extends Controller {
 
   #registerページの表示
@@ -96,7 +99,8 @@ class FormController extends Controller {
 
       //DBdataを取得
       $books = Book::where('id', $_POST['id'])->get();
-      $books->toArray();
+      $books[0]['last_update_date'] = date('Y.m.d h:i:s', strtotime($books[0]['updated_at']));
+      $books->toJSON();
       return response()->json(
               [
                   $books

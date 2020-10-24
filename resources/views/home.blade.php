@@ -103,9 +103,9 @@ $id = Auth::id();
 
 
 <div class="bl_navBlock" data-id="1">
-  <form id="updateDataForm" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajaxupdate">
+  <form id="updateDataForm" class="" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajaxupdate">
     <div class="bl_navBlock_inner">
-      <input name="user_id" type="number" value="1">
+      <input id="detail-id" name="user_id" type="number" value="1">
       <div class="bl_navBlock_ttl">
         Title
         <input id="detail-ttl" type="text" name="title" class="form-control" placeholder="タイトルが入ります" required autofocus>
@@ -113,16 +113,22 @@ $id = Auth::id();
 
       <div class="bl_navBlock_img">
 
-        <div id="detail-img" class="bl_navBlock_img_wrapper" style="background-image:url(store/image);">
+        <!--<div id="detail-img" class="bl_navBlock_img_wrapper" style="background-image:url(store/image);">
           
+        </div>-->
+
+        <div id="dropzone2" class="bl_imageDrop">
+          <div class="bl_imageDrop_wrapper">
+            <i class="far fa-images bl_imageDrop_icon"></i>
+            <!--本のイメージ画像を設定してください<br>(ドラッグ＆ドロップ可)-->
+          </div>
+          <input id="update-book-image" type="file" name="book-update-image" accept="image/jpeg, image/png, application/pdf" />
         </div>
-        <input id="update-book-image" type="file" name="book-update-image">
+
+        <!--<input id="update-book-image" type="file" name="book-update-image">-->
 
       </div>
 
-      <div class="bl_navBlock_data">
-        <div class="bl_navBlock_data_lastupdate">最終更新日 : <span class="bl_navBlock_data_lastupdate_date"></span></div>
-      </div>
 
       <div class="bl_navBlock_texts">
         <div class="bl_navBlock_texts_review">
@@ -133,6 +139,10 @@ $id = Auth::id();
             <textarea id="detail-desc" type="text" name="memo" class="form-control" placeholder="レビューなどが入ります" required autofocus></textarea>
           </div>
         </div>
+      </div>
+
+      <div class="bl_navBlock_data">
+        <div class="bl_navBlock_data_lastupdate">最終更新日 : <span class="bl_navBlock_data_lastupdate_date"></span></div>
       </div>
 
       <div class="bl_toggleBlock_ttl op_side js_ajaxUpdate">更新</div>
@@ -208,7 +218,15 @@ $id = Auth::id();
                                     </div>
 
                                     <div class="bl_formBlock_item">
-                                      <input id="input-book-image" type="file" name="book-create-image">
+                                      <!--<input id="input-book-image" type="file" name="book-create-image">-->
+                                      <div id="dropzone" class="bl_imageDrop">
+                                        <div class="bl_imageDrop_wrapper">
+                                          <i class="far fa-images bl_imageDrop_icon"></i>
+                                          <!--本のイメージ画像を設定してください<br>(ドラッグ＆ドロップ可)-->
+                                        </div>
+                                        <input id="input-book-image" type="file" name="book-create-image" accept="image/jpeg, image/png, application/pdf" />
+                                      </div>
+
                                     </div>
 
                                     <div class="bl_toggleBlock_ttl js_ajaxButton">送信する</div><!--ajaxで送信-->

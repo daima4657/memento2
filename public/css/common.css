@@ -94,7 +94,9 @@ img {
   transform: translateX(100%);
   -webkit-transition: all 200ms ease-out;
   -o-transition: all 200ms ease-out;
-  transition: all 200ms ease-out; }
+  transition: all 200ms ease-out;
+  overflow: auto;
+  overflow-x: hidden; }
   .js_navOpen .bl_navBlock {
     -webkit-transform: translateX(0);
     -ms-transform: translateX(0);
@@ -115,6 +117,9 @@ img {
     content: "";
     padding-top: 145%;
     display: block; }
+
+.bl_navBlock_texts {
+  margin-bottom: 20px; }
 
 input[name="user_id"] {
   display: none; }
@@ -522,6 +527,76 @@ path.el_headerLogo_part__7 {
   @media screen and (max-width: 840px) {
     .bl_sec2_texts {
       width: 100%; } }
+
+body {
+  background: #333; }
+
+.dropzone {
+  border: 0; }
+
+.bl_imageDrop {
+  position: relative;
+  border: 1px dashed #3097D1;
+  color: white;
+  font-size: 16px;
+  line-height: 1.8;
+  width: 100%;
+  height: 200px;
+  margin: 30px auto;
+  text-align: center;
+  color: #3097D1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
+.bl_imageDrop.hover {
+  border: 1px solid #FFA500;
+  color: #FFA500; }
+
+.bl_imageDrop.dropped {
+  /*background: #222;
+  border: 10px solid #444;*/
+  border: 1px solid #3097D1; }
+
+.bl_imageDrop_wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
+.bl_imageDrop_icon {
+  font-size: 32px; }
+
+.bl_imageDrop img {
+  vertical-align: middle;
+  max-width: 95%;
+  max-height: 90%; }
+
+.bl_imageDrop [type="file"] {
+  cursor: pointer;
+  width: 100%;
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
 
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
