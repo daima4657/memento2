@@ -166,7 +166,7 @@ function ajaxReload(message){
       var output = "";
       for (var i = 0; i < count; i++) {
         /*挿入するDOMの内容を指定*/
-        var image_url = data[0][i]['image_path'] == "notset" ? "image/noimage.jpg" : "storage/image/"+data[0][i]['image_path'];
+        var image_url = data[0][i]['image_path'] == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/"+data[0][i]['image_path'];
         output+= `
           <div class="bl_tableBlock_tr" data-id="${data[0][i]['id']}">
             <div class="bl_tableBlock_tr_wrapper js_navButton">
@@ -331,7 +331,7 @@ function ajaxGetter(directly,target){
 
 //詳細情報個所を再描画する
 function rewriteDetailData(data){
-  var image_url = data[0][0]['image_path'] == "notset" ? "image/noimage.jpg" : "storage/image/"+data[0][0]['image_path'];
+  var image_url = data[0][0]['image_path'] == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/"+data[0][0]['image_path'];
   $('#detail-ttl').val(data[0][0]['title']);
   $('#detail-desc').val(data[0][0]['memo']);
   $('#dropzone2 .bl_imageDrop_icon').remove();

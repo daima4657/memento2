@@ -7,6 +7,7 @@ use App\Models\Book;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 //タイムゾーンを日本にあわせる
 date_default_timezone_set('Asia/Tokyo');
@@ -117,6 +118,7 @@ class FormController extends Controller {
 
       #Bookモデルクラスのオブジェクトを作成
       $book = new Book();
+      $form = $request->all();
      
       #Bookモデルクラスのプロパティに値を代入
       /*$book->title = $request->title;
@@ -134,19 +136,38 @@ class FormController extends Controller {
 
       $book->title = $request->title;
       $book->memo = $request->memo;
+
       //ファイルが送信されたか確認
       if($request->hasFile('book-create-image')){//バリデーションでチェックするなら、ここは無くてもいいかも
         //アップロードに成功しているか確認
         if($request->file('book-create-image')->isValid()){
           //storeを行うならここまで来ないとだめだと思います
-          $path = $request->file('book-create-image')->store('public/image');
+
+          //s3アップロード開始
+          $image = $request->file('book-create-image');
+          //バケットの'bookimage'フォルダへアップロード
+          $path = Storage::disk('s3')->putFile('/bookimage/', $image, 'public');
           $book->image_path = basename($path);
+
+          //laravelのストレージに保存する場合
+          //$path = $request->file('book-create-image')->store('public/image');
+          //$book->image_path = basename($path);
         } else{
           
         }
       } else {
 
       }
+
+      //phpinfo();
+
+      //dd(env('AWS_DEFAULT_REGION'));
+      //dd(config('filesystems.disks.s3'));
+      
+      //Storage::disk('s3')->put('/', file_get_contents(public_path('image/about_img01.jpg')), 'public');
+      //アップロードした画像のフルパスを取得
+      //$book->image_path = Storage::disk('s3')->url($path);
+
 
       $book->userid = Auth::id();// 現在認証されているユーザーの代入
       #Bookモデルクラスのsaveメソッドを実行
@@ -197,8 +218,13 @@ class FormController extends Controller {
       //アップロードに成功しているか確認
       if($request->file('book-update-image')->isValid()){
         //storeを行うならここまで来ないとだめだと思います
-        $path = $request->file('book-update-image')->store('public/image');
-        $book->image_path = basename($path);
+
+        //s3アップロード開始
+          $image = $request->file('book-update-image');
+          //バケットの'bookimage'フォルダへアップロード
+          $path = Storage::disk('s3')->putFile('/bookimage/', $image, 'public');
+          $book->image_path = basename($path);
+
       } else{
         
       }

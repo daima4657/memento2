@@ -170,7 +170,7 @@ $id = Auth::id();
                             
                             $loop_limit = count($books);
                             for($i = 0; $i < $loop_limit; $i++){
-                              $image = $books[$i]->image_path == "notset" ? "image/noimage.jpg" : "storage/image/".$books[$i]->image_path;
+                              $image = $books[$i]->image_path == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/".$books[$i]->image_path;
 
                               echo <<< EOT
                               <div class="bl_tableBlock_tr" data-id="{$books[$i]->id}">
@@ -230,7 +230,7 @@ $id = Auth::id();
                                     </div>
 
                                     <div class="bl_toggleBlock_ttl js_ajaxButton">送信する</div><!--ajaxで送信-->
-
+                                    <!--<input type="submit" value="送信する">-->
                                     <!--<input type="submit" value="更新する">-->
 
                                     <!--<button class="btn btn-lg btn-primary btn-block" type="submit">送信</button>-->
