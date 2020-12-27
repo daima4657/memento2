@@ -16,9 +16,12 @@
 
 	<!-- Styles -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
-	<link href="{{ asset('css/app.css') }}" rel="stylesheet">
-	<link href="{{ asset('css/common.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/destyle.css') }}" rel="stylesheet">
+	<link href="{{ mix('css/app.css') }}" rel="stylesheet">
+	<!--<link href="{{ asset('css/common.css') }}" rel="stylesheet">-->
 
+	<script src="https://cdn.jsdelivr.net/npm/web-animations-js@2.3.2/web-animations.min.js"></script>
+	<script src="{{ asset('js/muuri.js') }}"></script>
 	<script src="{{ asset('js/Sortable.js') }}"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.js"></script>
 	<!-- jQuery読み込み -->
@@ -48,11 +51,41 @@
       </svg>
   </a>
 
-		<nav class="navbar navbar-default navbar-static-top">
-			<div class="container">
+		<nav class="p-navber">
+			<div class="p-navber__inner">
+				<!-- Right Side Of Navbar -->
+				<ul class="p-navber__right">
+					<!-- Authentication Links -->
+					@if (Auth::guest())
+						<li><a href="{{ route('login') }}">Login</a></li>
+						<li><a href="{{ route('register') }}">Register</a></li>
+					@else
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								{{ Auth::user()->name }} <span class="caret"></span>
+							</a>
+
+							<ul class="dropdown-menu" role="menu">
+								<li>
+									<a href="{{ route('logout') }}"
+										onclick="event.preventDefault();
+												 document.getElementById('logout-form').submit();">
+										Logout
+									</a>
+
+									<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+										{{ csrf_field() }}
+									</form>
+								</li>
+							</ul>
+						</li>
+					@endif
+				</ul>
+			</div>
+
+			<!--<div class="container">
 				<div class="navbar-header">
 
-					<!-- Collapsed Hamburger -->
 					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
 						<span class="sr-only">Toggle Navigation</span>
 						<span class="icon-bar"></span>
@@ -64,40 +97,13 @@
 				</div>
 
 				<div class="collapse navbar-collapse" id="app-navbar-collapse">
-					<!-- Left Side Of Navbar -->
+
 					<ul class="nav navbar-nav">
 						&nbsp;
 					</ul>
 
-					<!-- Right Side Of Navbar -->
-					<ul class="nav navbar-nav navbar-right">
-						<!-- Authentication Links -->
-						@if (Auth::guest())
-							<li><a href="{{ route('login') }}">Login</a></li>
-							<li><a href="{{ route('register') }}">Register</a></li>
-						@else
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-									{{ Auth::user()->name }} <span class="caret"></span>
-								</a>
 
-								<ul class="dropdown-menu" role="menu">
-									<li>
-										<a href="{{ route('logout') }}"
-											onclick="event.preventDefault();
-													 document.getElementById('logout-form').submit();">
-											Logout
-										</a>
-
-										<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-											{{ csrf_field() }}
-										</form>
-									</li>
-								</ul>
-							</li>
-						@endif
-					</ul>
 				</div>
-			</div>
+			</div>-->
 		</nav>
 <body id="@yield('slug')">

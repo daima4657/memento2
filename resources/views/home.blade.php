@@ -151,105 +151,188 @@ $id = Auth::id();
   </form>
 </div>
 
-<div class="container bl_contentBlock">
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
 
-                <div class="bl_panelBlock">
 
-                    <div class="el_greetingMessage">こんにちは<span style="color:green;font-weight: bold;"><?php echo $user->name; ?></span>さん！</div>
-                    <div class="bl_tableBlock">
+<main class="p-main">
+  <div class="p-dash_main">
+    <div class="p-dash_main__inner u-inner">
+        <div class="p-pannel_block">
 
-                        <div class="bl_tableBlock_ttl">あなたが最近読んだ本の記録</div>
+            <div class="p-pannel_block__heading">
+              Dashboard
+            </div>
 
-                        <div id="users_list_book" class="bl_tableBlock_wrapper users_list_book__cell">
+            <div class="el_greetingMessage">こんにちは<span style="color:green;font-weight: bold;"><?php echo $user->name; ?></span>さん！</div>
+            <div class="p-table_block">
 
-                            <?php
-                            
-                            $loop_limit = count($books);
-                            for($i = 0; $i < $loop_limit; $i++){
-                              $image = $books[$i]->image_path == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/".$books[$i]->image_path;
+                <div class="p-table_block__ttl">あなたが最近読んだ本の記録</div>
 
-                              echo <<< EOT
-                              <div class="bl_tableBlock_tr" data-id="{$books[$i]->id}">
-                              <div class="bl_tableBlock_tr_wrapper js_navButton">
-                              <div class="bl_tableBlock_image">
-                                <div class="bl_tableBlock_image_wrapper" style="background-image:url('{$image}');"></div>
+                <div id="users_list_book" class="p-table_block__wrapper users_list_book__cell">
 
-                              </div>
-                              <div class="bl_tableBlock_th">{$books[$i]->title}</div>
-                              <div class="bl_tableBlock_td">{$books[$i]->memo}</div>
-                              </div>
-                              EOT;?>
+                    <?php
+                    
+                    $loop_limit = count($books);
+                    for($i = 0; $i < $loop_limit; $i++){
+                      $image = $books[$i]->image_path == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/".$books[$i]->image_path;
 
-                            <form method="post" name="form1" action="/result-delete">
-                                <input type="hidden" name="_token" value="{{csrf_token()}}">
-                                <input type="hidden" name="id" value="<?php echo $books[$i]->id; ?>">
-                                <div class="el_deleteButton js_ajaxDelete" data-id="<?php echo $books[$i]->id; ?>">削除</div>
-                                <!--<button class="el_deleteButton" href="javascript:form1.submit()">削除</button>-->
-                            </form>
-
-                             <?php
-                             echo '</div>';
-                            }
-                            ?>
-
+                      echo <<< EOT
+                      <div class="p-table_block__tr --cell" data-id="{$books[$i]->id}">
+                      <div class="p-table_block__tr__wrapper js_navButton">
+                      <div class="p-table_block__image">
+                        <div class="p-table_block__image__wrapper">
+                          <img src="{$image}">
                         </div>
 
-                            <div class="bl_tableBlock_tr bl_tableBlock_tr__toggle">
+                      </div>
+                      <div class="p-table_block__th">{$books[$i]->title}</div>
+                      <!--<div class="p-table_block__td">{$books[$i]->memo}</div>-->
+                      </div>
+                      EOT;?>
 
-                              <div class="bl_toggleBlock">
-                                <div class="bl_toggleBlock_ttl js_toggleOpen">
-                                  <div class="el_toggleButton"></div>記録を追加する
+                    <form method="post" name="form1" action="/result-delete">
+                        <input type="hidden" name="_token" value="{{csrf_token()}}">
+                        <input type="hidden" name="id" value="<?php echo $books[$i]->id; ?>">
+                        <div class="el_deleteButton js_ajaxDelete" data-id="<?php echo $books[$i]->id; ?>"></div>
+                        <!--<button class="el_deleteButton" href="javascript:form1.submit()">削除</button>-->
+                    </form>
+
+                     <?php
+                     echo '</div>';
+                    }
+                    ?>
+
+                </div>
+
+                    <div class="p-table_block__tr p-table_block__tr__toggle">
+
+                      <div class="bl_toggleBlock">
+                        <div class="bl_toggleBlock_ttl js_toggleOpen">
+                          <div class="el_toggleButton"></div>記録を追加する
+                        </div>
+                        <div class="bl_toggleBlock_content js_toggleContent">
+                          <!--<form class="form-signin" role="form" method="post" action="/console/response">-->
+                          <form id="createDataForm" enctype='multipart/form-data' class="form-signin" role="form" method="post" action="/ajaxbookadd">
+                          {{-- CSRF対策 --}}
+                          <input type="hidden" name="_token" value="{{csrf_token()}}">
+                          <div class="bl_formBlock">
+                            <div class="bl_formBlock_item">
+                              <input id="input-book-ttl" type="text" name="title" class="form-control" placeholder="本のタイトルを入力してください" required autofocus>
+                            </div>
+                            <div class="bl_formBlock_item">
+                              <textarea id="input-book-review" name="memo" rows="4" cols="40" class="form-control --textarea" placeholder="感想など記入してください" required autofocus></textarea>
+                            </div>
+
+                            <div class="bl_formBlock_item">
+                              <!--<input id="input-book-image" type="file" name="book-create-image">-->
+                              <div id="dropzone" class="bl_imageDrop">
+                                <div class="bl_imageDrop_wrapper">
+                                  <i class="far fa-images bl_imageDrop_icon"></i>
+                                  <!--本のイメージ画像を設定してください<br>(ドラッグ＆ドロップ可)-->
                                 </div>
-                                <div class="bl_toggleBlock_content js_toggleContent">
-                                  <!--<form class="form-signin" role="form" method="post" action="/console/response">-->
-                                  <form id="createDataForm" enctype='multipart/form-data' class="form-signin" role="form" method="post" action="/ajaxbookadd">
-                                  {{-- CSRF対策 --}}
-                                  <input type="hidden" name="_token" value="{{csrf_token()}}">
-                                  <div class="bl_formBlock">
-                                    <div class="bl_formBlock_item">
-                                      <input id="input-book-ttl" type="text" name="title" class="form-control" placeholder="本のタイトルを入力してください" required autofocus>
-                                    </div>
-                                    <div class="bl_formBlock_item">
-                                      <textarea id="input-book-review" name="memo" rows="4" cols="40" class="form-control" placeholder="感想など記入してください" required autofocus></textarea>
-                                    </div>
-
-                                    <div class="bl_formBlock_item">
-                                      <!--<input id="input-book-image" type="file" name="book-create-image">-->
-                                      <div id="dropzone" class="bl_imageDrop">
-                                        <div class="bl_imageDrop_wrapper">
-                                          <i class="far fa-images bl_imageDrop_icon"></i>
-                                          <!--本のイメージ画像を設定してください<br>(ドラッグ＆ドロップ可)-->
-                                        </div>
-                                        <input id="input-book-image" type="file" name="book-create-image" accept="image/jpeg, image/png, application/pdf" />
-                                      </div>
-
-                                    </div>
-
-                                    <div class="bl_toggleBlock_ttl js_ajaxButton">送信する</div><!--ajaxで送信-->
-                                    <input type="submit" value="送信する">
-                                    <!--<input type="submit" value="更新する">-->
-
-                                    <!--<button class="btn btn-lg btn-primary btn-block" type="submit">送信</button>-->
-                                  </div>
-                                  
-                                  </form>
-                                  <input id="hoge" type="hidden" value="hoge">
-                                </div>
+                                <input id="input-book-image" type="file" name="book-create-image" accept="image/jpeg, image/png, application/pdf" />
                               </div>
 
-
                             </div>
+
+                            <div class="bl_toggleBlock_ttl js_ajaxButton">送信する</div><!--ajaxで送信-->
+                            <!--<input type="submit" value="送信する">-->
+                            <!--<input type="submit" value="更新する">-->
+
+                            <!--<button class="btn btn-lg btn-primary btn-block" type="submit">送信</button>-->
+                          </div>
+                          
+                          </form>
+                          <input id="hoge" type="hidden" value="hoge">
+                        </div>
+                      </div>
 
 
                     </div>
 
-                </div>
+
             </div>
+
         </div>
     </div>
+  </div>
+</main>
+
+
+
+
+<h1 id ="hogege">Grid Layout by Muuri.js</h1>
+<!--<div class="loading">
+  Loading images...
 </div>
+<div class="grid">
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/195/400/any?1" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/400/195/any?2" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/195/400/any?3" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/400/195/any?4" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/195/400/any?5" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/400/195/any?6" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/195/400/any?7" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/400/195/any?8" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/195/400/any?9" />
+    </div>
+  </div>
+  <div class="item">
+    <div class="item-content">
+      <img src="https://placeimg.com/400/195/any?10" />
+    </div>
+  </div>
+</div>-->
+
+
+
+<!--<ul id="items">
+  <li>item 1</li>
+  <li>item 2</li>
+  <li>item 3</li>
+</ul>
+
+<div class="card-body pt-0 pb-2 pl-3">
+    <div class="card-text">
+      <sample-like>
+      </sample-like>
+    </div>
+  </div>
+
+      <bookcell>
+      </bookcell>-->
+
 @endsection
