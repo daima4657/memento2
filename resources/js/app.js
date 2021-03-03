@@ -35,20 +35,30 @@ require('./bootstrap');
 var meta_csrf = document.getElementsByName ('csrf-token').item(0).content;/*csrfトークンをコピる*/
 
 
+/*クリックを防ぐ*/
+function enable_click_privent(){
+  $('body').addClass('js-enable_click_privent');
+}
+
+function disable_click_privent(){
+  $('body').removeClass('js-enable_click_privent');
+}
+
+
 /*開閉コンテンツ処理*/
 
-$(document).on('click','.js_toggleOpen',function(){
-  $(this).siblings('.js_toggleContent').slideToggle("fast");
-  if( $(this).parent('.bl_toggleBlock').hasClass('js_open')){
-    $(this).parent('.bl_toggleBlock').removeClass('js_open');
+$(document).on('click','.js-toggle_open',function(){
+  $(this).siblings('.js-toggle_content').slideToggle("fast");
+  if( $(this).parent('.bl_toggleBlock').hasClass('js-open')){
+    $(this).parent('.bl_toggleBlock').removeClass('js-open');
   } else {
-    $(this).parent('.bl_toggleBlock').addClass('js_open');
+    $(this).parent('.bl_toggleBlock').addClass('js-open');
   }
 });
 
 /*本の記録を追加ボタンを押した時*/
 
-$(document).on('click','.js_ajaxButton',function(){
+$(document).on('click','.js-ajax_button',function(){
   var form = $('#createDataForm').get()[0];
 
   //var ttl = $('#input-book-ttl').val();
@@ -67,7 +77,7 @@ $(document).on('click','.js_ajaxButton',function(){
 
 /*本の記録を更新ボタンを押した時*/
 
-$(document).on('click','.js_ajaxUpdate',function(){
+$(document).on('click','.js-ajaxUpdate',function(){
   var form = $('#updateDataForm').get()[0];
 
   //var id = $('.bl_navBlock').attr('data-id');
@@ -95,81 +105,25 @@ $(document).on('click','.js_ajaxUpdate',function(){
 
 /*本の記録を削除ボタンを押した時*/
 
-$(document).on('click','.js_ajaxDelete',function(event){
+$(document).on('click','.js-ajax_delete',function(event){
   event.preventDefault();
   var id = $(this).data('id');
-  ajaxRemover('/ajaxbookremove','ty',id);
+  var res = confirm("選択したアイテムを削除しますか？");
+  if(res == true){
+    ajaxRemover('/ajaxbookremove','ty',id);
+  } else {
+  }
+  //
 });
 
 /*固定メッセージの表示処理*/
 
 function fixedMessage(text){
-  $('#fixedMessage').html(text).addClass('js_open');
+  $('#fixedMessage').html(text).addClass('js-open');
   setTimeout(function(){
-    $('#fixedMessage').removeClass('js_open');
+    $('#fixedMessage').removeClass('js-open');
   },5000);
 }
-
-/*サイドナビの開閉処理*/
-
-var scrollBlockerFlag;
-var scrollpos;
-
-function scrollBlocker(flag){
-  if(flag){
-    scrollpos = $(window).scrollTop();
-    $('body').addClass('js_fixed js_fixed_' + scrollpos).css({'top': -scrollpos});
-    scrollBlockerFlag = true;
-  } else {
-    $('body').removeClass('js_fixed').css({'top': 0});
-    $('body').removeClass('js_fixed_' + scrollpos);
-    window.scrollTo( 0 , scrollpos );
-    scrollBlockerFlag = false;
-  }
-}
-
-
-//MENU
-$(function(){
-
-  var focusFlag = false;
-
-  $(document).on('click','.js_navButton',function(){
-    scrollBlocker(true);
-    $('body').addClass('js_navOpen');
-
-    var target_id = $(this).parent(".p-table_block_tr").data('id');
-    $('input#detail-id').val(target_id);
-    console.log( target_id);
-    //console.log( $('input#detail-id').val());
-
-    $('#detail-id').attr('value',target_id);
-
-    $('.bl_navBlock').attr('data-id',target_id);
-    ajaxGetter('/ajax_getData_by_id',target_id);//表示する情報の取得
-    setTimeout(function(){
-      focusFlag = true;
-    },200);
-  });
-
-  $(document).on('click','.bl_navBlock_close',function(){
-    focusFlag = false;
-    scrollBlocker(false);
-    $('body').removeClass('js_navOpen');
-  });
-  //MENU以外の場所をクリックした時にメニューを閉じる
-  $(document).on('click touchend', function(event) {
-    if (!$(event.target).closest('.bl_navBlock,.js_navButton').length && focusFlag) {
-      focusFlag = false;
-      scrollBlocker(false);
-      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
-      $('input[type=file]').val('');
-      console.log($('#update-book-image').prop('files')[0]);
-      $('body').removeClass('js_navOpen');
-    }
-  });
-})
-
 
 
 /*dbから情報を引っぱって、それを非同期更新したいときに使う関数*/
@@ -196,7 +150,7 @@ function ajaxReload(message){
     .done(function( data ) {
       var count = data[0].length;
       var output = "";
-      var removeGridItems = grid.remove(grid.getItems());
+      var removeGridItems = grid.remove(grid.getItems(), { removeElements: true });
       for (var i = 0; i < count; i++) {
         var additional_item = document.createElement('div');
         additional_item.className = 'p-table_block__tr --cell';
@@ -205,7 +159,7 @@ function ajaxReload(message){
         var image_url = data[0][i]['image_path'] == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/"+data[0][i]['image_path'];
         additional_item.innerHTML = `
           
-            <div class="p-table_block__tr__wrapper js_navButton">
+            <div class="p-table_block__tr__wrapper js-nav_button">
               <div class="p-table_block__image">
                 <div class="p-table_block__image__wrapper">
                   <img src="${image_url}">
@@ -215,13 +169,21 @@ function ajaxReload(message){
             </div>
             <form method="post" name="form1" action="/result-delete"><input type="hidden" name="_token" value="${meta_csrf}">
               <input type="hidden" name="id" value="${data[0][i]['id']}">
-              <div class="el_deleteButton js_ajaxDelete" data-id="${data[0][i]['id']}">
+              <div class="el_deleteButton js-ajax_delete" data-id="${data[0][i]['id']}">
                 
               </div>
             </form>
         `
         console.log(additional_item);
         grid.add(additional_item);
+        /*ちょっと間置いてからmuuri.jsの再整列を行う*/
+        /*setTimeout(function(){
+          grid.refreshItems();
+          grid.layout(function(items, hasLayoutChanged){
+            console.log(items);
+            console.log(hasLayoutChanged);
+          });
+        }, 1000);*/
       }
 
       
@@ -392,7 +354,7 @@ function rewriteDetailData(data){
   if($('#dropzone2 .bl_imageDrop_wrapper > img').length == 0){
     $('#dropzone2 .bl_imageDrop_wrapper').append('<img class="op_thumbnail" src="'+image_url+'">');
   }
-  $('.bl_navBlock_data_lastupdate_date').html(data[0][0]['last_update_date']);
+  $('.p-side_area__data__lastupdate__date').html(data[0][0]['last_update_date']);
 }
 
 
@@ -437,6 +399,107 @@ $(function() {
   });
 });
 
+
+/*サイドナビの開閉処理*/
+
+var scrollBlockerFlag;
+var scrollpos;
+
+function scrollBlocker(flag){
+  if(flag){
+    scrollpos = $(window).scrollTop();
+    $('body').addClass('js-fixed js-fixed_' + scrollpos).css({'top': -scrollpos});
+    scrollBlockerFlag = true;
+  } else {
+    $('body').removeClass('js-fixed').css({'top': 0});
+    $('body').removeClass('js-fixed_' + scrollpos);
+    window.scrollTo( 0 , scrollpos );
+    scrollBlockerFlag = false;
+  }
+}
+
+
+//MENU
+$(function(){
+
+  var focusFlag = false;
+
+  $(document).on('click','.js-nav_button',function(){
+    scrollBlocker(true);
+    $('body').addClass('is-side_area_edit_open');
+    enable_click_privent();
+
+    var target_id = $(this).parent(".p-table_block__tr").data('id');
+    $('input#detail-id').val(target_id);
+    //console.log( $('input#detail-id').val());
+
+    $('#detail-id').attr('value',target_id);
+
+    $('.bl_navBlock').attr('data-id',target_id);
+    console.log(target_id);
+    ajaxGetter('/ajax_getData_by_id',target_id);//表示する情報の取得
+    setTimeout(function(){
+      focusFlag = true;
+    },200);
+  });
+
+  $(document).on('click','.bl_navBlock_close',function(){
+    focusFlag = false;
+    scrollBlocker(false);
+    $('body').removeClass('is-side_area_edit_open');
+    disable_click_privent();
+  });
+  //MENU以外の場所をクリックした時にメニューを閉じる
+  $(document).on('click touchend', function(event) {
+    if (!$(event.target).closest('.p-side_area,.js-nav_button').length && focusFlag) {
+      focusFlag = false;
+      scrollBlocker(false);
+      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
+      $('input[type=file]').val('');
+      console.log($('#update-book-image').prop('files')[0]);
+      $('body').removeClass('is-side_area_edit_open');
+      disable_click_privent();
+    }
+  });
+})
+
+//新規アイテムの追加用パネルの開閉
+$(function(){
+
+  var focusFlag = false;
+
+  $(document).on('click','.js-open_add_item',function(){
+    scrollBlocker(true);
+    $('body').addClass('is-side_area_add_open');
+    enable_click_privent();
+    setTimeout(function(){
+      focusFlag = true;
+    },200);
+  });
+
+  $(document).on('click','.js-close_add_item',function(){
+    focusFlag = false;
+    scrollBlocker(false);
+    $('body').removeClass('is-side_area_add_open');
+    disable_click_privent();
+  });
+  //MENU以外の場所をクリックした時にメニューを閉じる
+  $(document).on('click touchend', function(event) {
+    if (!$(event.target).closest('.p-add_items,.p-side_area').length && focusFlag) {
+      focusFlag = false;
+      scrollBlocker(false);
+      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
+      $('input[type=file]').val('');
+      console.log($('#update-book-image').prop('files')[0]);
+      $('body').removeClass('is-side_area_add_open');
+      disable_click_privent();
+    }
+  });
+})
+
+
+
+//dropzone
 $(function() {
   
   $('#dropzone2').on('dragover', function() {
@@ -512,13 +575,29 @@ Dropzone.options.updateDataForm = {
 
 /*muuri*/
 
+if($("#users_list_book").length){
+  var grid = new Muuri('#users_list_book', {
+    dragEnabled: false,
+    layout: {
+      fillGaps: true
+    }
+  });
 
-var grid = new Muuri('#users_list_book', {
-  dragEnabled: true,
-  layout: {
-    fillGaps: true
+
+  muuriOvserver();
+  //定期的にmuuri.jsのレイアウトチェックを実行
+  function muuriOvserver(){
+    setTimeout(function(){
+      grid.refreshItems();
+      grid.layout(function(items, hasLayoutChanged){
+        //console.log(items);
+        //console.log(hasLayoutChanged);
+      });
+      muuriOvserver();
+    },1000);
   }
-});
+}
+
 
 
 //var removedItemsA = grid.remove(grid.getItems());
@@ -541,13 +620,13 @@ var grid = new Muuri('#users_list_book', {
 
 // When all items have loaded refresh their
 // dimensions and layout the grid.
-window.addEventListener('load', function () {
+/*window.addEventListener('load', function () {
   grid.refreshItems().layout();
   // For a little finishing touch, let's fade in
   // the images after all them have loaded and
   // they are corrertly positioned.
   document.body.classList.add('images-loaded');
-});
+});*/
 
 //var grid = new Muuri('.js-muuri');
 

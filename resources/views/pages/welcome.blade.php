@@ -1,6 +1,8 @@
 @section('slug', 'home')
 @include('tmp.header')
 
+<main class="p-main">
+
         <!-- Styles -->
         <style>
             /*@import url('https://fonts.googleapis.com/css?family=Abel');*/
@@ -129,5 +131,8 @@
         </div>-->
         
         <script src="{{ mix('/js/app.js')  }}"></script>
+
+</main>
+
     </body>
 </html>

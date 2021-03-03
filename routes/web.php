@@ -48,3 +48,7 @@ Route::post('/ajaxbookremove','App\Http\Controllers\FormController@bookRemoveAja
 
 /*ajaxでデータベースから情報を引っ張りたい時*/
 Route::post('/ajaxgetdata','App\Http\Controllers\FormController@someGetter');
+
+
+/*ユーザーページ*/
+Route::get('users/{id}/books', 'App\Http\Controllers\UserPageController@getAbout')->name('user.books');

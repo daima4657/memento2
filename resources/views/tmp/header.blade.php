@@ -12,7 +12,11 @@
   <link href="{{ asset('image/touch.png') }}" rel="apple-touch-icon-precomposed">
 
 
-	<title>{{ config('app.name', 'Laravel') }}@yield('title')</title>
+	<title>
+	@if(isset( $page_title ))
+	{{$title}}
+	@endif
+	{{ config('app.name', 'Laravel') }}</title>
 
 	<!-- Styles -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
@@ -106,4 +110,5 @@
 				</div>
 			</div>-->
 		</nav>
-<body id="@yield('slug')">
+<div class="p-click_privent"></div>
+<body id="@if(isset( $slug )){{$slug}}@endif">
