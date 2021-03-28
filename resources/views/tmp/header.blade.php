@@ -112,3 +112,5 @@
 		</nav>
 <div class="p-click_privent"></div>
 <body id="@if(isset( $slug )){{$slug}}@endif">
+
+

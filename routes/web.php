@@ -34,21 +34,36 @@ Auth::routes();
 
 Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home');
 
-/*ajaxでbookのデータ取得*/
-Route::any('/ajax_getData_by_id','App\Http\Controllers\FormController@bookGetAjaxById');
 
-/*ajaxでbookの登録*/
-Route::any('/ajaxbookadd','App\Http\Controllers\FormController@bookAddAjax');
+/*ajaxで新規showcaseの登録*/
+Route::any('/ajax_showcase_add','App\Http\Controllers\FormController@showcaseAddAjax');
+
+/*ajaxで新規showcaseの情報取得*/
+Route::any('/ajax_get_showcase','App\Http\Controllers\FormController@ShowcasesGetter');
+
+/*ajaxでshowcaseの削除*/
+Route::post('/ajax_remove_showcase','App\Http\Controllers\FormController@ShowcasesRemoveAjax');
+
+
+
+/*ajaxでShoecase itemのデータ取得*/
+Route::any('/ajax_getData_by_id','App\Http\Controllers\FormController@getShowcaseItemAjax');
+
+/*ajaxでShoecase itemの登録*/
+Route::any('/apply_new_item','App\Http\Controllers\FormController@AddNewItemAjax');
 
 /*ajaxでcellの更新*/
-Route::any('/ajaxupdate','App\Http\Controllers\FormController@cellUpdateAjax');
+Route::any('/ajax_edit_showcase_item','App\Http\Controllers\FormController@editShowcaseItemAjax');
 
-/*ajaxでbookの削除*/
-Route::post('/ajaxbookremove','App\Http\Controllers\FormController@bookRemoveAjax');
+/*ajaxでShoecase itemの削除*/
+Route::post('/ajax_remove_showcase_item','App\Http\Controllers\FormController@removeShowcaseItemAjax');
 
 /*ajaxでデータベースから情報を引っ張りたい時*/
 Route::post('/ajaxgetdata','App\Http\Controllers\FormController@someGetter');
 
 
-/*ユーザーページ*/
-Route::get('users/{id}/books', 'App\Http\Controllers\UserPageController@getAbout')->name('user.books');
+
+
+
+/*ショーケースページ*/
+Route::get('users/{id}/{title}', 'App\Http\Controllers\UserPageController@getShowcaseDetail')->name('user.showcase_detail');

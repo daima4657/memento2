@@ -20,4 +20,10 @@ $page_title = "Dashboard";
 $slug = "dashboard";
 @endphp
 
+
+
+
+
 @extends('layouts.list')
+
+

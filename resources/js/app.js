@@ -1,10 +1,10 @@
+/*コントローラーとのやり取りを書くモジュールです。*/
+
 import Vue from 'vue'
 import dio from './components/dio'
 import bookcell from './components/bookcell'
 
 /*vueコンポーネント設定*/
-
-console.log("jonathan");
 
 Vue.component('sample-like', require('./components/SampleLike').default);
 
@@ -35,26 +35,99 @@ require('./bootstrap');
 var meta_csrf = document.getElementsByName ('csrf-token').item(0).content;/*csrfトークンをコピる*/
 
 
-/*クリックを防ぐ*/
-function enable_click_privent(){
-  $('body').addClass('js-enable_click_privent');
-}
-
-function disable_click_privent(){
-  $('body').removeClass('js-enable_click_privent');
-}
 
 
-/*開閉コンテンツ処理*/
+/*ショーケースの追加ボタンを押した時*/
 
-$(document).on('click','.js-toggle_open',function(){
-  $(this).siblings('.js-toggle_content').slideToggle("fast");
-  if( $(this).parent('.bl_toggleBlock').hasClass('js-open')){
-    $(this).parent('.bl_toggleBlock').removeClass('js-open');
-  } else {
-    $(this).parent('.bl_toggleBlock').addClass('js-open');
+$(document).on('click','.js-create_showcase_button',function(){
+  var form = $('#createShowCaseForm').get()[0];
+
+  console.log("wry");
+  
+  var ary_lists ={
+    message: "ショーケースを作成しました！",
   }
+ 
+  ajaxSetter('/ajax_showcase_add',form,ary_lists);
 });
+
+/*ショーケースの削除ボタンを押した時*/
+
+$(document).on('click','.js-ajax_delete_showcase',function(event){
+  console.log("delete");
+  event.preventDefault();
+  var id = $(this).data('id');
+  var res = confirm("選択したアイテムを削除しますか？");
+  if(res == true){
+    ajaxRemover('/ajax_remove_showcase','ty',id);
+  } else {
+  }
+  //
+});
+
+
+/*Showcaseエリアのリフレッシュ*/
+function reflesh_showcases(){
+  　$.ajaxSetup({
+  　　headers: {
+  　　　'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  　　}
+  　});
+    var jqxhr;
+    if (jqxhr) {
+      jqxhr.abort();
+    }
+    $.ajax({
+        type: 'POST',
+        data: {
+            id: 1,
+            ttl: 'hoge',
+            review: 'huga',
+        },
+        url: '/ajax_get_showcase',
+        dataType: 'json'
+    })
+    .done(function( data ) {
+      var count = data[0].length;
+      var output = "";
+      $(".p-docs__wrapper").empty();
+      for (var i = 0; i < count; i++) {
+        var additional_item = document.createElement('div');
+        additional_item.innerHTML = `
+          <div class="p-docs__item">
+            <a href="/users/${data[0][i]['use_id']}/${data[0][i]['name']}" class="u-cover"></a>
+            ${data[0][i]['name']}
+          </div>
+          <div class="p-docs_item_overflow">
+            <div class="p-three_dots">
+              <span class="__dot"></span><span class="__dot"></span><span class="__dot"></span>
+            </div>
+          </div>
+          <div class="p-docs__menu">
+            <div class="p-docs__menu__item">
+              <span class="js-ajax_delete_showcase" data-id="${data[0][i]['id']}">ショーケースを削除する</span>
+            </div>
+          </div>
+        `
+        $(".p-docs__wrapper").append(additional_item);
+        /*挿入するDOMの内容を指定*/
+
+      }
+
+      
+      //$('#users_list_book').html(output);
+      //fixedMessage(message);
+    })
+    .fail(function( data ) {
+
+       console.log('error happend');
+    })
+    .always(function( data ) {
+            // ...
+    });
+}
+
+
 
 /*本の記録を追加ボタンを押した時*/
 
@@ -72,7 +145,7 @@ $(document).on('click','.js-ajax_button',function(){
     form:form,*/
     message: "メモリーを追加しました！",
   }
-	ajaxSetter('/ajaxbookadd',form,ary_lists);
+	ajaxSetter('/apply_new_item',form,ary_lists);
 });
 
 /*本の記録を更新ボタンを押した時*/
@@ -91,7 +164,7 @@ $(document).on('click','.js-ajaxUpdate',function(){
     message: "メモリーを更新しました！",
   }
 
-  ajaxSetter('/ajaxupdate',form,ary_lists).then(function (value) {
+  ajaxSetter('/ajax_edit_showcase_item',form,ary_lists).then(function (value) {
       // 非同期処理成功
     target_id = $('#updateDataForm input[name="user_id"]').val();
     ajaxGetter('/ajax_getData_by_id',target_id);//表示する情報の取得
@@ -110,7 +183,7 @@ $(document).on('click','.js-ajax_delete',function(event){
   var id = $(this).data('id');
   var res = confirm("選択したアイテムを削除しますか？");
   if(res == true){
-    ajaxRemover('/ajaxbookremove','ty',id);
+    ajaxRemover('/ajax_remove_showcase_item','ty',id);
   } else {
   }
   //
@@ -159,7 +232,7 @@ function ajaxReload(message){
         var image_url = data[0][i]['image_path'] == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/"+data[0][i]['image_path'];
         additional_item.innerHTML = `
           
-            <div class="p-table_block__tr__wrapper js-nav_button">
+            <div class="p-table_block__tr__wrapper js-submenu_toggle" data-submenu_type="edit">
               <div class="p-table_block__image">
                 <div class="p-table_block__image__wrapper">
                   <img src="${image_url}">
@@ -255,6 +328,7 @@ function ajaxSetter(url,form,ary_lists){
           form.reset(); //処理が終わったフォームの入力内容をクリア
 
           ajaxReload(ary_lists.message);
+          reflesh_showcases();
 
         })
         .fail(function( data ) {
@@ -300,7 +374,9 @@ function ajaxRemover(directly,target,id_get){
     .done(function( data ) {
       //console.log(data);
       //location.reload();
+      reflesh_showcases();
       ajaxReload('メモリーを削除しました！');
+
     })
     .fail(function( data ) {
        console.log('error happend');
@@ -400,102 +476,6 @@ $(function() {
 });
 
 
-/*サイドナビの開閉処理*/
-
-var scrollBlockerFlag;
-var scrollpos;
-
-function scrollBlocker(flag){
-  if(flag){
-    scrollpos = $(window).scrollTop();
-    $('body').addClass('js-fixed js-fixed_' + scrollpos).css({'top': -scrollpos});
-    scrollBlockerFlag = true;
-  } else {
-    $('body').removeClass('js-fixed').css({'top': 0});
-    $('body').removeClass('js-fixed_' + scrollpos);
-    window.scrollTo( 0 , scrollpos );
-    scrollBlockerFlag = false;
-  }
-}
-
-
-//MENU
-$(function(){
-
-  var focusFlag = false;
-
-  $(document).on('click','.js-nav_button',function(){
-    scrollBlocker(true);
-    $('body').addClass('is-side_area_edit_open');
-    enable_click_privent();
-
-    var target_id = $(this).parent(".p-table_block__tr").data('id');
-    $('input#detail-id').val(target_id);
-    //console.log( $('input#detail-id').val());
-
-    $('#detail-id').attr('value',target_id);
-
-    $('.bl_navBlock').attr('data-id',target_id);
-    console.log(target_id);
-    ajaxGetter('/ajax_getData_by_id',target_id);//表示する情報の取得
-    setTimeout(function(){
-      focusFlag = true;
-    },200);
-  });
-
-  $(document).on('click','.bl_navBlock_close',function(){
-    focusFlag = false;
-    scrollBlocker(false);
-    $('body').removeClass('is-side_area_edit_open');
-    disable_click_privent();
-  });
-  //MENU以外の場所をクリックした時にメニューを閉じる
-  $(document).on('click touchend', function(event) {
-    if (!$(event.target).closest('.p-side_area,.js-nav_button').length && focusFlag) {
-      focusFlag = false;
-      scrollBlocker(false);
-      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
-      $('input[type=file]').val('');
-      console.log($('#update-book-image').prop('files')[0]);
-      $('body').removeClass('is-side_area_edit_open');
-      disable_click_privent();
-    }
-  });
-})
-
-//新規アイテムの追加用パネルの開閉
-$(function(){
-
-  var focusFlag = false;
-
-  $(document).on('click','.js-open_add_item',function(){
-    scrollBlocker(true);
-    $('body').addClass('is-side_area_add_open');
-    enable_click_privent();
-    setTimeout(function(){
-      focusFlag = true;
-    },200);
-  });
-
-  $(document).on('click','.js-close_add_item',function(){
-    focusFlag = false;
-    scrollBlocker(false);
-    $('body').removeClass('is-side_area_add_open');
-    disable_click_privent();
-  });
-  //MENU以外の場所をクリックした時にメニューを閉じる
-  $(document).on('click touchend', function(event) {
-    if (!$(event.target).closest('.p-add_items,.p-side_area').length && focusFlag) {
-      focusFlag = false;
-      scrollBlocker(false);
-      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
-      $('input[type=file]').val('');
-      console.log($('#update-book-image').prop('files')[0]);
-      $('body').removeClass('is-side_area_add_open');
-      disable_click_privent();
-    }
-  });
-})
 
 
 
@@ -597,6 +577,7 @@ if($("#users_list_book").length){
     },1000);
   }
 }
+
 
 
 
@@ -720,3 +701,202 @@ if($("#users_list_book").length){
     return aVal < bVal ? -1 : aVal > bVal ? 1 : compareItemTitle(a, b);
   }
 });*/
+
+
+
+/*開閉系の処理*/
+
+console.log("karz");
+
+/*クリックを防ぐ*/
+function enable_click_privent(){
+  $('body').addClass('js-enable_click_privent');
+}
+
+function disable_click_privent(){
+  $('body').removeClass('js-enable_click_privent');
+}
+
+
+/*開閉コンテンツ処理*/
+
+$(document).on('click','.js-toggle_open',function(){
+  $(this).siblings('.js-toggle_content').slideToggle("fast");
+  if( $(this).parent('.bl_toggleBlock').hasClass('js-open')){
+    $(this).parent('.bl_toggleBlock').removeClass('js-open');
+  } else {
+    $(this).parent('.bl_toggleBlock').addClass('js-open');
+  }
+});
+
+
+
+
+
+$(function(){
+
+  $(document).on('click touch','.js-submenu_toggle',function(e){
+  e.preventDefault();
+  control.switch();
+  var type = $(this).data('submenu_type');
+  $('#submenu').attr('data-type',type);
+
+  });
+  var control = {
+    switch:function(){
+    if(this.state){
+      $("body").removeClass("is-submenu_active");
+      this.state = false;
+    } else {
+      $("body").addClass("is-submenu_active");
+      this.state = true;
+    }
+    },
+    state:false,
+  };
+  //function filtered_search_button()
+
+  //Close filterd-search if clicked external area.
+  $(document).on('click touchend', function(event) {
+    console.log(event.target);
+    if (!$(event.target).closest('#submenu,.js-submenu_toggle').length && control.state) {
+      control.switch();
+    }
+  });
+});
+
+
+//MENU
+$(function(){
+
+  var focusFlag = false;
+
+  $(document).on('click','.js-toggle_edit',function(){
+    scrollBlocker(true);
+    $('body').addClass('is-side_area_edit_open');
+    enable_click_privent();
+
+    var target_id = $(this).parent(".p-table_block__tr").data('id');
+    $('input#detail-id').val(target_id);
+    //console.log( $('input#detail-id').val());
+
+    $('#detail-id').attr('value',target_id);
+
+    $('.p-side_area.__edit').attr('data-id',target_id);
+    console.log(target_id);
+    ajaxGetter('/ajax_getData_by_id',target_id);//表示する情報の取得
+    setTimeout(function(){
+      focusFlag = true;
+    },200);
+  });
+
+  $(document).on('click','.bl_navBlock_close',function(){
+    focusFlag = false;
+    scrollBlocker(false);
+    $('body').removeClass('is-side_area_edit_open');
+    disable_click_privent();
+  });
+  //MENU以外の場所をクリックした時にメニューを閉じる
+  $(document).on('click touchend', function(event) {
+    if (!$(event.target).closest('.p-side_area,.js-nav_button').length && focusFlag) {
+      focusFlag = false;
+      scrollBlocker(false);
+      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
+      $('input[type=file]').val('');
+      console.log($('#update-book-image').prop('files')[0]);
+      $('body').removeClass('is-side_area_edit_open');
+      disable_click_privent();
+    }
+  });
+})
+
+//新規アイテムの追加用パネルの開閉
+$(function(){
+
+  var focusFlag = false;
+
+  $(document).on('click','.js-open_add_item',function(){
+    scrollBlocker(true);
+    $('body').addClass('is-side_area_add_open');
+    enable_click_privent();
+    setTimeout(function(){
+      focusFlag = true;
+    },200);
+  });
+
+  $(document).on('click','.js-close_add_item',function(){
+    focusFlag = false;
+    scrollBlocker(false);
+    $('body').removeClass('is-side_area_add_open');
+    disable_click_privent();
+  });
+  //MENU以外の場所をクリックした時にメニューを閉じる
+  $(document).on('click touchend', function(event) {
+    if (!$(event.target).closest('.p-add_items,.p-side_area').length && focusFlag) {
+      focusFlag = false;
+      scrollBlocker(false);
+      $('#dropzone2 > .bl_imageDrop_wrapper > img').remove();
+      $('input[type=file]').val('');
+      console.log($('#update-book-image').prop('files')[0]);
+      $('body').removeClass('is-side_area_add_open');
+      disable_click_privent();
+    }
+  });
+})
+
+/*Privent scrolling*/
+var scrollBlockerFlag;
+var scrollpos;
+
+function scrollBlocker(flag){
+  if(flag){
+    scrollpos = $(window).scrollTop();
+    $('body').addClass('js-fixed js-fixed_' + scrollpos).css({'top': -scrollpos});
+    scrollBlockerFlag = true;
+  } else {
+    $('body').removeClass('js-fixed').css({'top': 0});
+    $('body').removeClass('js-fixed_' + scrollpos);
+    window.scrollTo( 0 , scrollpos );
+    scrollBlockerFlag = false;
+  }
+}
+
+
+
+$(function(){
+
+  $(document).on('click touch','.js-docs_add',function(e){
+  e.preventDefault();
+  fSearchInOut.switch();
+
+  });
+  var fSearchInOut = {
+    switch:function(){
+    if(this.state){
+      scrollBlocker(false);
+      //disable_click_privent();
+      $("body").removeClass("is-add_showcase_active");
+      
+      this.state = false;
+    } else {
+      scrollBlocker(true);
+      //enable_click_privent();
+       $("body").addClass("is-add_showcase_active");
+       this.state = true;
+    }
+    },
+    state:false,
+  };
+
+  //MENU以外の場所をクリックした時にメニューを閉じる
+  /*$(document).on('click touchend', function(event) {
+    if (!$(event.target).closest('.p-side_area,.js-nav_button').length && focusFlag) {
+      focusFlag = false;
+      scrollBlocker(false);
+      $('body').removeClass('is-add_showcase_active');
+      disable_click_privent();
+    }
+  });*/
+
+  //function filtered_search_button()
+});

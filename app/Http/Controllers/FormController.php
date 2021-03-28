@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 //use Illuminate\Http\Request;
-use App\Models\Book;
+use App\Models\Showcase;
+use App\Models\Showcase_item;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -91,20 +92,20 @@ class FormController extends Controller {
   }
 
 
-  #ajaxでbookの情報を取得
-  public function bookGetAjaxById(){
+  #ajaxでshoe case itemの情報を取得
+  public function getShowcaseItemAjax(){
 
 
       #Bookモデルクラスのオブジェクトを作成
-      $book = new Book();
+      $showcase_item = new Showcase_item();
 
       //DBdataを取得
-      $books = Book::where('id', $_POST['id'])->get();
-      $books[0]['last_update_date'] = date('Y.m.d h:i:s', strtotime($books[0]['updated_at']));
-      $books->toJSON();
+      $showcase_items = Showcase_item::where('id', $_POST['id'])->get();
+      $showcase_items[0]['last_update_date'] = date('Y.m.d h:i:s', strtotime($showcase_items[0]['updated_at']));
+      $showcase_items->toJSON();
       return response()->json(
               [
-                  $books
+                  $showcase_items
               ],
               200,[],
               JSON_UNESCAPED_UNICODE
@@ -112,66 +113,22 @@ class FormController extends Controller {
   }
 
 
-  #ajaxでbookの情報を追加
-  public function bookAddAjax(Request $request){
+  #ajaxでshowcaseの情報を追加
+  public function showcaseAddAjax(Request $request){
 
 
-      #Bookモデルクラスのオブジェクトを作成
-      $book = new Book();
+      #Showcaseモデルクラスのオブジェクトを作成
+      $showcase = new Showcase();
       $form = $request->all();
-     
-      #Bookモデルクラスのプロパティに値を代入
-      /*$book->title = $request->title;
-      $book->memo = $request->memo;
-      $path = $request->file('image')->store('public/image');
-      $book->image_path = basename($path);*/
 
-      //$book->title = $_POST['ary_lists']['ttl'];
-      //$book->memo = $_POST['ary_lists']['review'];
+      $showcase->user_id = 0;
+      $showcase->name = "notset";
 
 
-      $book->title = "notset";
-      $book->memo = "notset";
-      $book->image_path = "notset";
-
-      $book->title = $request->title;
-      $book->memo = $request->memo;
-
-      //ファイルが送信されたか確認
-      if($request->hasFile('book-create-image')){//バリデーションでチェックするなら、ここは無くてもいいかも
-        //アップロードに成功しているか確認
-        if($request->file('book-create-image')->isValid()){
-          //storeを行うならここまで来ないとだめだと思います
-
-          //s3アップロード開始
-          $image = $request->file('book-create-image');
-          //バケットの'bookimage'フォルダへアップロード
-          $path = Storage::disk('s3')->putFile('/bookimage/', $image, 'public');
-          $book->image_path = basename($path);
-
-          //laravelのストレージに保存する場合
-          //$path = $request->file('book-create-image')->store('public/image');
-          //$book->image_path = basename($path);
-        } else{
-          
-        }
-      } else {
-
-      }
-
-      //phpinfo();
-
-      //dd(env('AWS_DEFAULT_REGION'));
-      //dd(config('filesystems.disks.s3'));
-      
-      //Storage::disk('s3')->put('/', file_get_contents(public_path('image/about_img01.jpg')), 'public');
-      //アップロードした画像のフルパスを取得
-      //$book->image_path = Storage::disk('s3')->url($path);
-
-
-      $book->userid = Auth::id();// 現在認証されているユーザーの代入
-      #Bookモデルクラスのsaveメソッドを実行
-      $book->save();
+      $showcase->user_id = Auth::id();// 現在認証されているユーザーの代入
+      $showcase->name = $request->title;
+      #Showcaseモデルクラスのsaveメソッドを実行
+      $showcase->save();
 
       //DBdataを取得
       $ttl = "hogehoge";
@@ -196,23 +153,125 @@ class FormController extends Controller {
           );*/
   }
 
-  #ajaxでbookの情報を更新
-  public function cellUpdateAjax(Request $request){
+  #ajaxでshowcaseの情報を削除
+  public function ShowcasesRemoveAjax(){
+
+    $showcase = Showcase::findOrFail($_POST['id']);
+    $showcase->delete();
+
+      //DBdataを取得
+      return response()->json(
+              [
+                  'id' => 1,
+              ],
+              200,[],
+              JSON_UNESCAPED_UNICODE
+          );
+  }
+
+
+  #ajaxで新規ショーケースアイテムを追加
+  public function AddNewItemAjax(Request $request){
+
+
+      #Bookモデルクラスのオブジェクトを作成
+      $showcase_items = new Showcase_item();
+      $form = $request->all();
+     
+      #Bookモデルクラスのプロパティに値を代入
+      /*$book->title = $request->title;
+      $book->memo = $request->memo;
+      $path = $request->file('image')->store('public/image');
+      $book->image_path = basename($path);*/
+
+      //$book->title = $_POST['ary_lists']['ttl'];
+      //$book->memo = $_POST['ary_lists']['review'];
+
+
+      $showcase_items->title = "notset";
+      $showcase_items->memo = "notset";
+      $showcase_items->image_path = "notset";
+
+      $showcase_items->title = $request->title;
+      $showcase_items->memo = $request->memo;
+
+      //ファイルが送信されたか確認
+      if($request->hasFile('book-create-image')){//バリデーションでチェックするなら、ここは無くてもいいかも
+        //アップロードに成功しているか確認
+        if($request->file('book-create-image')->isValid()){
+          //storeを行うならここまで来ないとだめだと思います
+
+          //s3アップロード開始
+          $image = $request->file('book-create-image');
+          //バケットの'bookimage'フォルダへアップロード
+          $path = Storage::disk('s3')->putFile('/bookimage/', $image, 'public');
+          $showcase_items->image_path = basename($path);
+
+          //laravelのストレージに保存する場合
+          //$path = $request->file('book-create-image')->store('public/image');
+          //$book->image_path = basename($path);
+        } else{
+          
+        }
+      } else {
+
+      }
+
+      //phpinfo();
+
+      //dd(env('AWS_DEFAULT_REGION'));
+      //dd(config('filesystems.disks.s3'));
+      
+      //Storage::disk('s3')->put('/', file_get_contents(public_path('image/about_img01.jpg')), 'public');
+      //アップロードした画像のフルパスを取得
+      //$book->image_path = Storage::disk('s3')->url($path);
+
+
+      $showcase_items->userid = Auth::id();// 現在認証されているユーザーの代入
+      $showcase_items->showcase_id = 1;// 所属するショーケースのID
+      #Bookモデルクラスのsaveメソッドを実行
+      $showcase_items->save();
+
+      //DBdataを取得
+      $ttl = "hogehoge";
+      $review = "fugafuga";
+
+      return response()->json(
+              [
+                  'ttl' => $ttl,
+                  'review' => $review
+              ],
+              200,[],
+              JSON_UNESCAPED_UNICODE
+          );
+
+      /*return response()->json(
+              [
+                  'ttl' => $ttl,
+                  'review' => $review
+              ],
+              200,[],
+              JSON_UNESCAPED_UNICODE
+          );*/
+  }
+
+  #ajaxでShow case itemの情報を更新
+  public function editShowcaseItemAjax(Request $request){
 
     /*$sample = Book::find($_POST['ary_lists']['id']);
     $sample->title = $_POST['ary_lists']['ttl'];
     $sample->memo = $_POST['ary_lists']['review'];
     $sample->save();*/
 
-    $book = Book::find($request->user_id);
+    $showcase_item = Showcase_item::find($request->user_id);
 
-    $book->title = "notset";
-    $book->memo = "notset";
+    $showcase_item->title = "notset";
+    $showcase_item->memo = "notset";
     //$book->image_path = "notset";
 
 
-    $book->title = $request->title;
-    $book->memo = $request->memo;
+    $showcase_item->title = $request->title;
+    $showcase_item->memo = $request->memo;
     //ファイルが送信されたか確認
     if($request->hasFile('book-update-image')){//バリデーションでチェックするなら、ここは無くてもいいかも
       //アップロードに成功しているか確認
@@ -223,7 +282,7 @@ class FormController extends Controller {
           $image = $request->file('book-update-image');
           //バケットの'bookimage'フォルダへアップロード
           $path = Storage::disk('s3')->putFile('/bookimage/', $image, 'public');
-          $book->image_path = basename($path);
+          $showcase_item->image_path = basename($path);
 
       } else{
         
@@ -232,7 +291,7 @@ class FormController extends Controller {
 
     }
     
-    $book->save();
+    $showcase_item->save();
 
     //DBdataを取得
     $ttl = $request->title;
@@ -247,16 +306,35 @@ class FormController extends Controller {
         );
   }
 
-  #ajaxでbookの情報を削除
-  public function bookRemoveAjax(){
+  #ajaxで任意のShow case itemを削除
+  public function removeShowcaseItemAjax(){
 
-    $book = Book::findOrFail($_POST['id']);
-    $book->delete();
+    $showcase_item = Showcase_item::findOrFail($_POST['id']);
+    $showcase_item->delete();
 
       //DBdataを取得
       return response()->json(
               [
                   'id' => 1,
+              ],
+              200,[],
+              JSON_UNESCAPED_UNICODE
+          );
+  }
+
+  #Showcaseテーブルから情報を取得する
+  public function ShowcasesGetter(){
+
+
+      #Bookモデルクラスのオブジェクトを作成
+      $showcases = new Showcase();
+
+      //DBdataを取得
+      $showcases = Showcase::where('user_id', Auth::id())->get();
+      $showcases->toArray();
+      return response()->json(
+              [
+                  $showcases
               ],
               200,[],
               JSON_UNESCAPED_UNICODE
@@ -270,14 +348,14 @@ class FormController extends Controller {
 
 
       #Bookモデルクラスのオブジェクトを作成
-      $book = new Book();
+      $showcase_item = new Showcase_item();
 
       //DBdataを取得
-      $books = Book::where('userid', Auth::id())->get();
-      $books->toArray();
+      $showcase_items = Showcase_item::where('userid', Auth::id())->get();
+      $showcase_items->toArray();
       return response()->json(
               [
-                  $books
+                  $showcase_items
               ],
               200,[],
               JSON_UNESCAPED_UNICODE

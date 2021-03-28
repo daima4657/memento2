@@ -49,165 +49,59 @@ $id = Auth::id();
 
 
 
-<div class="p-side_area __edit" data-id="1">
-	<form id="updateDataForm" class="" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajaxupdate">
-		<div class="p-side_area__inner">
-			<input id="detail-id" name="user_id" type="number" value="1">
-			<div class="p-side_area__role">
-				Edit your item
-			</div>
 
-			<div class="p-side_area__item __date">
-				<div class="p-side_area__data__lastupdate">最終更新日 : <span class="p-side_area__data__lastupdate__date"></span></div>
-			</div>
-			<div class="p-side_area__item __ttl">
-				<div class="p-side_area__item__text">
-					Title
+
+
+
+
+	<!--dashboard only-->
+
+	<div class="p-docs">
+
+		<div class="p-docs__inner">
+			<div class="p-section_ttl">
+				<div class="p-section_ttl__main">
+					Your Showcases
 				</div>
+				<div class="p-section_ttl__sub">
+					あなたのショーケース
+				</div>
+			</div>
+			<div id="showcase_view" class="p-docs__wrapper">
+				<?php
 				
-				<input id="detail-ttl" type="text" name="title" class="form-control" placeholder="タイトルが入ります" required autofocus>
-			</div>
-
-			<div class="p-side_area__item __img">
-
-				<div class="p-side_area__item__text">
-					Thumbnail
-				</div>
-				<!--<div id="detail-img" class="p-side_area__img_wrapper" style="background-image:url(store/image);">
-					
-				</div>-->
-
-				<div id="dropzone2" class="bl_imageDrop">
-					<div class="bl_imageDrop_wrapper">
-						<i class="far fa-images bl_imageDrop_icon"></i>
-						<!--本のイメージ画像を設定してください<br>(ドラッグ＆ドロップ可)-->
-					</div>
-					<input id="update-book-image" type="file" name="book-update-image" accept="image/jpeg, image/png, application/pdf" />
-				</div>
-
-				<!--<input id="update-book-image" type="file" name="book-update-image">-->
-
-			</div>
-
-
-			<div class="p-side_area__item __memo">
-				<div class="p-side_area__texts__review">
-					<div class="p-side_area__item__text">
-						MEMO
-					</div>
-					<div class="p-side_area__texts__review__text">
-						<textarea id="detail-desc" type="text" name="memo" class="form-control" placeholder="レビューなどが入ります" required autofocus></textarea>
-					</div>
-				</div>
-			</div>
-
-			@if ($__env->yieldContent('slug') === 'dashboard')
-			<div class="p-button op_side js-ajaxUpdate">Update</div>
-			@endif
-			
-		</div>
-	</form>
-</div>
-
-<!--新規アイテム追加-->
-<div class="p-side_area __add">
-	<div class="p-side_area__inner">
-		<div class="p-toggle">
-			<!--<div class="p-button js-toggle_open">
-				<div class="el_toggleButton"></div>記録を追加する
-			</div>-->
-			<div class="p-toggle_content ">
-				<!--<form class="form-signin" role="form" method="post" action="/console/response">-->
-				<form id="createDataForm" enctype='multipart/form-data' class="form-signin" role="form" method="post" action="/ajaxbookadd">
-				{{-- CSRF対策 --}}
-				<input type="hidden" name="_token" value="{{csrf_token()}}">
-				<div class="bl_formBlock">
-					<div class="p-side_area__role">
-						Add new item
-					</div>
-
-					<div class="p-side_area__item __ttl">
-						<div class="p-side_area__item__text">
-							Title
-						</div>
-						
-						<input id="input-book-ttl" type="text" name="title" class="form-control" placeholder="本のタイトルを入力してください" required autofocus>
-					</div>
-
-
-					<div class="p-side_area__item __memo">
-						<div class="p-side_area__item__text">
-							Description
-						</div>
-						
-						<textarea id="input-book-review" name="memo" rows="4" cols="40" class="form-control --textarea" placeholder="感想など記入してください" required autofocus></textarea>
-					</div>
-
-					<div class="p-side_area__item __memo">
-						<div class="p-side_area__item__text">
-							Thumbnail
-						</div>
-						
-						<div id="dropzone" class="bl_imageDrop">
-							<div class="bl_imageDrop_wrapper">
-								<i class="far fa-images bl_imageDrop_icon"></i>
-								<!--本のイメージ画像を設定してください<br>(ドラッグ＆ドロップ可)-->
+				$loop_limit = count($showcases);
+				for($i = 0; $i < $loop_limit; $i++){
+					echo <<< EOT
+					<div class="p-docs__item">
+						<a href="/users/{$showcases[$i]->user_id}/{$showcases[$i]->name}" class="u-cover"></a>
+						{$showcases[$i]->name}
+						<div class="p-docs_item_overflow">
+							<div class="p-three_dots">
+								<span class="__dot"></span><span class="__dot"></span><span class="__dot"></span>
 							</div>
-							<input id="input-book-image" type="file" name="book-create-image" accept="image/jpeg, image/png, application/pdf" />
+						</div>
+						<div class="p-docs__menu">
+							<div class="p-docs__menu__item">
+								<span class="js-ajax_delete_showcase" data-id="{$showcases[$i]->id}">ショーケースを削除する</span>
+							</div>
 						</div>
 					</div>
+					EOT;
+					}
+					?>
 
-
-					@if ($__env->yieldContent('slug') === 'dashboard')
-					<div class="p-button js-ajax_button">Apply</div><!--ajaxで送信-->
-					@endif
-					<!--<input type="submit" value="送信する">-->
-					<!--<input type="submit" value="更新する">-->
-
-					<!--<button class="btn btn-lg btn-primary btn-block" type="submit">送信</button>-->
-				</div>
-				
-				</form>
-				<input id="hoge" type="hidden" value="hoge">
 			</div>
 		</div>
+		
 	</div>
-</div>
+	<!--END:dashboard only-->
 
 
 
-<main class="p-main">
-	<div class="p-left">
-		@if ($__env->yieldContent('slug') === 'dashboard')
-		<div class="p-add js-open_add_item"></div>
-		@endif
-	</div>
-	<div class="p-dash_main">
-		<div class="p-dash_main__inner">
-				<div class="p-pannel_block">
-
-						<div class="p-pannel_block__heading">
-							@if(isset( $page_title ))
-							<div class="p-pannel_block__heading_ttl">
-								{{$page_title}}
-							</div>
-							@endif
-							@if ($slug === 'dashboard')
-								<div class="p-greeting">Hello！<span style="color:green;font-weight: bold;"><?php echo $user->name; ?></span></div>
-							@elseif ($slug === 'list')
-								<div class="p-greeting"><span style="color:green;font-weight: bold;"><?php echo $user->name; ?></span>さんのショーケース</div>
-							@endif
-							
-						</div>
-						
-						@include('tmp.item_list')
 
 
-				</div>
-			
-		</div>
-	</div>
-</main>
+
 
 
 <!--<div id="muuri_button">整列</div>

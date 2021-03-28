@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Book;
+use App\Models\Showcase;
+use App\Models\Showcase_item;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -25,8 +26,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $books = Book::where('userid', Auth::id())->get();
-        $books->toArray();
-        return view('home',compact('books'));
+        $showcases = Showcase::where('user_id', Auth::id())->get();
+        $showcases->toArray();
+
+
+        return view('dashboard',compact('showcases'));
     }
 }
