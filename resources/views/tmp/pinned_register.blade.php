@@ -1,3 +1,4 @@
+@isset($slug)
 @if ($slug === 'dashboard')
 
 <!--Submenu.-->
@@ -224,3 +225,4 @@
 <!--新規アイテム追加ボタン-->
 <div class="p-docs_add js-submenu_toggle" data-submenu_type="new"></div>
 @endif
+@endisset

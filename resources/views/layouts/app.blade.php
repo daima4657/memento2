@@ -1,4 +1,5 @@
 <!--***全てのページの雛形となるテンプレートです***-->
+
 <!--Template name : app.blade-->
 @include('tmp.header')
 
