@@ -40,13 +40,18 @@ var meta_csrf = document.getElementsByName ('csrf-token').item(0).content;/*csrf
 /*ショーケースの追加ボタンを押した時*/
 
 $(document).on('click','.js-create_showcase_button',function(){
+  loadingStart();
   var form = $('#createShowCaseForm').get()[0];
 
   var ary_lists ={
     message: "ショーケースを作成しました！",
   }
  
-  ajaxSetter('/ajax_showcase_add',form,ary_lists);
+  ajaxSetter('/ajax_showcase_add',form,ary_lists).then(function (value) {
+  }).catch(function (error) {
+  }).finally(function (error) {
+    loadingEnd();
+  });
 });
 
 /*ショーケースの削除ボタンを押した時*/
@@ -62,6 +67,7 @@ $(document).on('click','.js-ajax_delete_showcase',function(event){
   }
   //
 });
+
 
 
 /*Showcaseエリアのリフレッシュ*/
@@ -91,9 +97,9 @@ function reflesh_showcases(){
       $(".p-docs__wrapper").empty();
       for (var i = 0; i < count; i++) {
         var additional_item = document.createElement('div');
+        additional_item.className = 'p-docs__item';
         additional_item.innerHTML = `
-          <div class="p-docs__item">
-            <a href="/users/${data[0][i]['use_id']}/${data[0][i]['name']}" class="u-cover"></a>
+            <a href="/users/${data[0][i]['user_id']}/${data[0][i]['name']}" class="u-cover"></a>
             ${data[0][i]['name']}
           </div>
           <div class="p-docs_item_overflow">
@@ -105,7 +111,6 @@ function reflesh_showcases(){
             <div class="p-docs__menu__item">
               <span class="js-ajax_delete_showcase" data-id="${data[0][i]['id']}">ショーケースを削除する</span>
             </div>
-          </div>
         `
         $(".p-docs__wrapper").append(additional_item);
         /*挿入するDOMの内容を指定*/

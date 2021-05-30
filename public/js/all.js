@@ -31924,11 +31924,14 @@ var meta_csrf = document.getElementsByName('csrf-token').item(0).content;
 /*ショーケースの追加ボタンを押した時*/
 
 $(document).on('click', '.js-create_showcase_button', function () {
+  loadingStart();
   var form = $('#createShowCaseForm').get()[0];
   var ary_lists = {
     message: "ショーケースを作成しました！"
   };
-  ajaxSetter('/ajax_showcase_add', form, ary_lists);
+  ajaxSetter('/ajax_showcase_add', form, ary_lists).then(function (value) {})["catch"](function (error) {})["finally"](function (error) {
+    loadingEnd();
+  });
 });
 /*ショーケースの削除ボタンを押した時*/
 
@@ -31973,7 +31976,8 @@ function reflesh_showcases() {
 
     for (var i = 0; i < count; i++) {
       var additional_item = document.createElement('div');
-      additional_item.innerHTML = "\n          <div class=\"p-docs__item\">\n            <a href=\"/users/".concat(data[0][i]['use_id'], "/").concat(data[0][i]['name'], "\" class=\"u-cover\"></a>\n            ").concat(data[0][i]['name'], "\n          </div>\n          <div class=\"p-docs_item_overflow\">\n            <div class=\"p-three_dots\">\n              <span class=\"__dot\"></span><span class=\"__dot\"></span><span class=\"__dot\"></span>\n            </div>\n          </div>\n          <div class=\"p-docs__menu\">\n            <div class=\"p-docs__menu__item\">\n              <span class=\"js-ajax_delete_showcase\" data-id=\"").concat(data[0][i]['id'], "\">\u30B7\u30E7\u30FC\u30B1\u30FC\u30B9\u3092\u524A\u9664\u3059\u308B</span>\n            </div>\n          </div>\n        ");
+      additional_item.className = 'p-docs__item';
+      additional_item.innerHTML = "\n            <a href=\"/users/".concat(data[0][i]['user_id'], "/").concat(data[0][i]['name'], "\" class=\"u-cover\"></a>\n            ").concat(data[0][i]['name'], "\n          </div>\n          <div class=\"p-docs_item_overflow\">\n            <div class=\"p-three_dots\">\n              <span class=\"__dot\"></span><span class=\"__dot\"></span><span class=\"__dot\"></span>\n            </div>\n          </div>\n          <div class=\"p-docs__menu\">\n            <div class=\"p-docs__menu__item\">\n              <span class=\"js-ajax_delete_showcase\" data-id=\"").concat(data[0][i]['id'], "\">\u30B7\u30E7\u30FC\u30B1\u30FC\u30B9\u3092\u524A\u9664\u3059\u308B</span>\n            </div>\n        ");
       $(".p-docs__wrapper").append(additional_item);
       /*挿入するDOMの内容を指定*/
     } //$('#users_list_book').html(output);
