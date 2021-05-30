@@ -111,6 +111,9 @@
 			</div>-->
 		</nav>
 <div class="p-click_privent"></div>
+<div class="p-loading">
+	<img src="{{ asset('image/loading.gif') }}" alt="" class="p-loading__icon">
+</div>
 <body id="@if(isset( $slug )){{$slug}}@endif">
 
 

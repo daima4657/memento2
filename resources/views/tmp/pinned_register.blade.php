@@ -9,7 +9,7 @@
 			<div class="p-side_area__inner">
 				<input id="detail-id" name="user_id" type="number" value="1">
 				<div class="p-side_area__role">
-					Edit your item
+					Edit your item!
 				</div>
 
 				<div class="p-side_area__item __date">
@@ -98,14 +98,15 @@
 	</div>
 
 </div>
+
 @elseif ($slug === 'showcase_detail')
 <!--Submenu.-->
 <div id="submenu" class="p-side_area __edit" data-id="1" data-type="new" v-cloak>
 
-	<div class="p-side_area__wrapper __edit">
+	<div class="p-side_area__wrapper __edit"><!--既存のアイテムを編集するためのボード-->
 		<form id="updateDataForm" class="" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajaxupdate">
 			<div class="p-side_area__inner">
-				<input id="detail-id" name="user_id" type="number" value="1">
+				<input id="edit-item-id" name="showcase_id" type="number" value="1">
 				<div class="p-side_area__role">
 					Edit your item
 				</div>

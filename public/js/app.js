@@ -31925,7 +31925,6 @@ var meta_csrf = document.getElementsByName('csrf-token').item(0).content;
 
 $(document).on('click', '.js-create_showcase_button', function () {
   var form = $('#createShowCaseForm').get()[0];
-  console.log("wry");
   var ary_lists = {
     message: "ショーケースを作成しました！"
   };
@@ -31989,6 +31988,7 @@ function reflesh_showcases() {
 
 
 $(document).on('click', '.js-ajax_button', function () {
+  loadingStart();
   var form = $('#createDataForm').get()[0]; //var ttl = $('#input-book-ttl').val();
   //var review = $('#input-book-review').val();
   //console.log(form);
@@ -32000,11 +32000,24 @@ $(document).on('click', '.js-ajax_button', function () {
     form:form,*/
     message: "メモリーを追加しました！"
   };
-  ajaxSetter('/apply_new_item', form, ary_lists);
+  ajaxSetter('/apply_new_item', form, ary_lists).then(function (value) {})["catch"](function (error) {
+    // 非同期処理失敗。呼ばれない
+    console.log("本の記録の追加失敗");
+    console.log(error);
+  })["finally"](function (error) {
+    loadingEnd();
+  });
+});
+$(function () {
+  $(document).on('change', 'input[type="file"]', function () {
+    var file = this.files[0];
+    console.log(file); //$(this).parents('label').nextAll('.formFileName').text(file.name);
+  });
 });
 /*本の記録を更新ボタンを押した時*/
 
 $(document).on('click', '.js-ajaxUpdate', function () {
+  loadingStart();
   var form = $('#updateDataForm').get()[0]; //var id = $('.bl_navBlock').attr('data-id');
   //var ttl = $('#detail-ttl').val();
   //var review = $('#detail-desc').val();
@@ -32017,11 +32030,14 @@ $(document).on('click', '.js-ajaxUpdate', function () {
   };
   ajaxSetter('/ajax_edit_showcase_item', form, ary_lists).then(function (value) {
     // 非同期処理成功
-    target_id = $('#updateDataForm input[name="user_id"]').val();
+    var target_id = $('input#edit-item-id').val();
     ajaxGetter('/ajax_getData_by_id', target_id); //表示する情報の取得
   })["catch"](function (error) {
     // 非同期処理失敗。呼ばれない
+    console.log("本の記録を更新失敗");
     console.log(error);
+  })["finally"](function (error) {
+    loadingEnd();
   });
 });
 /*本の記録を削除ボタンを押した時*/
@@ -32116,7 +32132,6 @@ function addGridItem(item) {
 
 
 function ajaxSetter(url, form, ary_lists) {
-  console.log(form);
   return new Promise(function (resolve, reject) {
     setTimeout(function () {
       // 成功
@@ -32126,6 +32141,7 @@ function ajaxSetter(url, form, ary_lists) {
         }
       });
       var formData = new FormData(form);
+      console.log(formData);
       JSON.stringify(ary_lists);
       var jqxhr;
 
@@ -32151,16 +32167,16 @@ function ajaxSetter(url, form, ary_lists) {
 
       }).done(function (data) {
         //location.reload();
+        console.log("データベースへの追加が成功しました");
         form.reset(); //処理が終わったフォームの入力内容をクリア
 
         ajaxReload(ary_lists.message);
         reflesh_showcases();
       }).fail(function (data) {
+        console.log("データベースへの追加が失敗しました");
         console.log(data);
-        console.log('error happend');
       }).always(function (data) {
-        console.log("hogehoge"); //データの更新が完了してから次の処理へ。
-
+        //データの更新が完了してから次の処理へ。
         resolve('ajax setter done');
       }); //console.log(jqxhr);
     }, 0);
@@ -32200,6 +32216,7 @@ function ajaxRemover(directly, target, id_get) {
 
 
 function ajaxGetter(directly, target) {
+  console.log(target);
   $.ajaxSetup({
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -32489,34 +32506,69 @@ $(document).on('click', '.js-toggle_open', function () {
     $(this).parent('.bl_toggleBlock').addClass('js-open');
   }
 });
-$(function () {
-  $(document).on('click touch', '.js-submenu_toggle', function (e) {
-    e.preventDefault();
-    control["switch"]();
-    var type = $(this).data('submenu_type');
-    $('#submenu').attr('data-type', type);
-  });
-  var control = {
-    "switch": function _switch() {
-      if (this.state) {
-        $("body").removeClass("is-submenu_active");
-        this.state = false;
-      } else {
-        $("body").addClass("is-submenu_active");
-        this.state = true;
-      }
-    },
-    state: false
-  }; //function filtered_search_button()
-  //Close filterd-search if clicked external area.
+/*ローディング*/
 
-  $(document).on('click touchend', function (event) {
-    console.log(event.target);
-
-    if (!$(event.target).closest('#submenu,.js-submenu_toggle').length && control.state) {
-      control["switch"]();
+var loadingControl = {
+  "switch": function _switch() {
+    if (this.state) {
+      console.log("loadin on");
+      $(".p-loading").removeClass("is-active");
+      this.state = false;
+    } else {
+      $(".p-loading").addClass("is-active");
+      this.state = true;
     }
-  });
+  },
+  state: false
+}; //ローディング開始
+
+function loadingStart() {
+  loadingControl["switch"]();
+} //ローディング終了
+
+
+function loadingEnd() {
+  loadingControl["switch"]();
+
+  if (humburgerControl.state) {
+    humburgerControl["switch"]();
+  }
+}
+/*ハンバーガーメニュー*/
+
+
+$(document).on('click touch', '.js-submenu_toggle', function (e) {
+  e.preventDefault();
+  humburgerControl["switch"]();
+  var type = $(this).data('submenu_type');
+  $('#submenu').attr('data-type', type);
+
+  if (type === 'edit') {
+    var target_id = $(this).parent(".p-table_block__tr").data('id');
+    $('input#edit-item-id').val(target_id);
+    ajaxGetter('/ajax_getData_by_id', target_id); //表示する情報の取得
+  }
+});
+var humburgerControl = {
+  "switch": function _switch() {
+    if (this.state) {
+      $("body").removeClass("is-submenu_active");
+      this.state = false;
+    } else {
+      $("body").addClass("is-submenu_active");
+      this.state = true;
+    }
+  },
+  state: false
+}; //function filtered_search_button()
+//Close filterd-search if clicked external area.
+
+$(document).on('click touchend', function (event) {
+  console.log(event.target);
+
+  if (!$(event.target).closest('#submenu,.js-submenu_toggle,.p-loading').length && humburgerControl.state) {
+    humburgerControl["switch"]();
+  }
 }); //MENU
 
 $(function () {

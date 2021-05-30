@@ -97,7 +97,7 @@ class FormController extends Controller {
 
 
       #Bookモデルクラスのオブジェクトを作成
-      $showcase_item = new Showcase_item();
+      $showcase_items = new Showcase_item();
 
       //DBdataを取得
       $showcase_items = Showcase_item::where('id', $_POST['id'])->get();
@@ -263,7 +263,7 @@ class FormController extends Controller {
     $sample->memo = $_POST['ary_lists']['review'];
     $sample->save();*/
 
-    $showcase_item = Showcase_item::find($request->user_id);
+    $showcase_item = Showcase_item::find($request->showcase_id);
 
     $showcase_item->title = "notset";
     $showcase_item->memo = "notset";
@@ -272,6 +272,7 @@ class FormController extends Controller {
 
     $showcase_item->title = $request->title;
     $showcase_item->memo = $request->memo;
+
     //ファイルが送信されたか確認
     if($request->hasFile('book-update-image')){//バリデーションでチェックするなら、ここは無くてもいいかも
       //アップロードに成功しているか確認
@@ -288,8 +289,9 @@ class FormController extends Controller {
         
       }
     } else {
-
+      //return "wrrrryyyyy!!!";
     }
+
     
     $showcase_item->save();
 
