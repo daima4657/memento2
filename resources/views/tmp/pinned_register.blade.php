@@ -5,8 +5,11 @@
 <div id="submenu" class="p-side_area __edit" data-id="1" data-type="new" v-cloak>
 
 	<div class="p-side_area__wrapper __edit">
-		<form id="updateDataForm" class="" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajaxupdate">
+		<form id="updateDataForm" class="" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajax_edit_showcase_item">
 			<div class="p-side_area__inner">
+				{{-- CSRF対策 --}}
+				<input type="hidden" name="_token" value="{{csrf_token()}}">
+
 				<input id="detail-id" name="user_id" type="number" value="1">
 				<div class="p-side_area__role">
 					Edit your item!
@@ -57,6 +60,8 @@
 				</div>
 
 
+
+
 				<div class="p-button op_side js-ajaxUpdate">Update</div>
 
 				
@@ -104,8 +109,10 @@
 <div id="submenu" class="p-side_area __edit" data-id="1" data-type="new" v-cloak>
 
 	<div class="p-side_area__wrapper __edit"><!--既存のアイテムを編集するためのボード-->
-		<form id="updateDataForm" class="" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajaxupdate">
+		<form id="updateDataForm" class="" method="post" name="form-update" enctype='multipart/form-data' class="form-update" role="form" action="/ajax_edit_showcase_item">
 			<div class="p-side_area__inner">
+				{{-- CSRF対策 --}}
+				<input type="hidden" name="_token" value="{{csrf_token()}}">
 				<input id="edit-item-id" name="showcase_id" type="number" value="1">
 				<div class="p-side_area__role">
 					Edit your item
@@ -155,7 +162,6 @@
 					</div>
 				</div>
 
-
 				<div class="p-button op_side js-ajaxUpdate">Update</div>
 
 				
@@ -164,7 +170,7 @@
 	</div>
 
 	<div class="p-side_area__wrapper __new">
-		<form id="createDataForm" enctype='multipart/form-data' class="form-signin" role="form" method="post" action="/ajaxbookadd">
+		<form id="createDataForm" enctype='multipart/form-data' class="form-signin" role="form" method="post" action="/apply_new_item">
 			<div class="p-side_area__inner">
 				{{-- CSRF対策 --}}
 				<input type="hidden" name="_token" value="{{csrf_token()}}">

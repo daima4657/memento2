@@ -345,9 +345,49 @@ class FormController extends Controller {
 
 
 
+  #特定のショーケース内のメモリーを全て取得する
+  public function getMemory(Request $request){
+
+    $data = $request->all();
+
+    $user_id = $data['user_id'];
+    $showcase_name = $data['showcase_name'];
+
+    #ShowcaseカラムからタイトルとユーザーIDを利用して呼び出すショーケースのIDを取得する
+    $showcases = Showcase::where([
+      ['name', $showcase_name],
+      ['user_id',$user_id]
+    ])->get();
+
+    #LaravelのCollectionで指定した列の情報のみを再取得する
+    $showcase_subset = $showcases->map(function($showcase){
+      return collect($showcase->toArray())
+        ->only(['id'])
+        ->all();
+    });
+
+      #Bookモデルクラスのオブジェクトを作成
+      $showcase_item = new Showcase_item();
+
+      //DBdataを取得
+      $showcase_items = Showcase_item::where([
+        ['userid', $user_id],
+        ['showcase_id', $showcase_subset[0]['id']]
+      ])->get();
+      
+      $showcase_items->toArray();
+      return response()->json(
+              [
+                  $showcase_items
+              ],
+              200,[],
+              JSON_UNESCAPED_UNICODE
+          );
+  }
+
+
   #任意のデータを取得して返す
   public function someGetter(){
-
 
       #Bookモデルクラスのオブジェクトを作成
       $showcase_item = new Showcase_item();

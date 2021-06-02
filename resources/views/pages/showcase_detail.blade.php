@@ -34,12 +34,7 @@ $id = Auth::id();
 
 
 
-
-
-
-
-
-
+<div id="current_status" data-user_id="{{$id}}" data-showcase_name="{{$showcase_title}}"></div>
 
 
 

@@ -58,8 +58,11 @@ Route::any('/ajax_edit_showcase_item','App\Http\Controllers\FormController@editS
 /*ajaxでShoecase itemの削除*/
 Route::post('/ajax_remove_showcase_item','App\Http\Controllers\FormController@removeShowcaseItemAjax');
 
-/*ajaxでデータベースから情報を引っ張りたい時*/
+
+/*ajaxでデータベースから情報を引っ張りたい時(showcase一覧)*/
 Route::post('/ajaxgetdata','App\Http\Controllers\FormController@someGetter');
+/*ajaxでデータベースから情報を引っ張りたい時(特定のshowcase内のmemory)*/
+Route::post('/get_memory','App\Http\Controllers\FormController@getMemory');
 
 
 
