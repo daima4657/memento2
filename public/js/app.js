@@ -31949,45 +31949,48 @@ $(document).on('click', '.js-ajax_delete_showcase', function (event) {
 /*Showcaseエリアのリフレッシュ*/
 
 function reflesh_showcases() {
-  var user_id = $("#current_status").data("user_id");
-  var showcase_name = $("#current_status").data("showcase_name");
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  return new Promise(function (callback) {
+    var user_id = $("#current_status").data("user_id");
+    var showcase_name = $("#current_status").data("showcase_name");
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var jqxhr;
+
+    if (jqxhr) {
+      jqxhr.abort();
     }
-  });
-  var jqxhr;
 
-  if (jqxhr) {
-    jqxhr.abort();
-  }
+    $.ajax({
+      type: 'POST',
+      data: {
+        id: user_id,
+        name: showcase_name
+      },
+      url: '/ajax_get_showcase',
+      dataType: 'json'
+    }).done(function (data) {
+      var count = data[0].length;
+      var output = "";
+      $(".p-docs__wrapper").empty();
 
-  $.ajax({
-    type: 'POST',
-    data: {
-      id: user_id,
-      name: showcase_name
-    },
-    url: '/ajax_get_showcase',
-    dataType: 'json'
-  }).done(function (data) {
-    var count = data[0].length;
-    var output = "";
-    $(".p-docs__wrapper").empty();
+      for (var i = 0; i < count; i++) {
+        var additional_item = document.createElement('div');
+        additional_item.className = 'p-docs__item';
+        additional_item.innerHTML = "\n            <a href=\"/users/".concat(data[0][i]['user_id'], "/").concat(data[0][i]['name'], "\" class=\"u-cover\"></a>\n            ").concat(data[0][i]['name'], "\n          </div>\n          <div class=\"p-docs_item_overflow\">\n            <div class=\"p-three_dots\">\n              <span class=\"__dot\"></span><span class=\"__dot\"></span><span class=\"__dot\"></span>\n            </div>\n          </div>\n          <div class=\"p-docs__menu\">\n            <div class=\"p-docs__menu__item\">\n              <span class=\"js-ajax_delete_showcase\" data-id=\"").concat(data[0][i]['id'], "\">\u30B7\u30E7\u30FC\u30B1\u30FC\u30B9\u3092\u524A\u9664\u3059\u308B</span>\n            </div>\n        ");
+        $(".p-docs__wrapper").append(additional_item);
+        /*挿入するDOMの内容を指定*/
+      } //$('#users_list_book').html(output);
+      //fixedMessage(message);
 
-    for (var i = 0; i < count; i++) {
-      var additional_item = document.createElement('div');
-      additional_item.className = 'p-docs__item';
-      additional_item.innerHTML = "\n            <a href=\"/users/".concat(data[0][i]['user_id'], "/").concat(data[0][i]['name'], "\" class=\"u-cover\"></a>\n            ").concat(data[0][i]['name'], "\n          </div>\n          <div class=\"p-docs_item_overflow\">\n            <div class=\"p-three_dots\">\n              <span class=\"__dot\"></span><span class=\"__dot\"></span><span class=\"__dot\"></span>\n            </div>\n          </div>\n          <div class=\"p-docs__menu\">\n            <div class=\"p-docs__menu__item\">\n              <span class=\"js-ajax_delete_showcase\" data-id=\"").concat(data[0][i]['id'], "\">\u30B7\u30E7\u30FC\u30B1\u30FC\u30B9\u3092\u524A\u9664\u3059\u308B</span>\n            </div>\n        ");
-      $(".p-docs__wrapper").append(additional_item);
-      /*挿入するDOMの内容を指定*/
-    } //$('#users_list_book').html(output);
-    //fixedMessage(message);
-
-  }).fail(function (data) {
-    console.log('error happend');
-    console.log(data);
-  }).always(function (data) {// ...
+    }).fail(function (data) {
+      console.log('error happend');
+      console.log(data);
+    }).always(function (data) {
+      callback(data);
+    });
   });
 }
 /*メモリーの追加ボタンを押した時*/
@@ -32011,6 +32014,7 @@ $(document).on('click', '.js-ajax_button', function () {
     console.log("本の記録の追加失敗");
     console.log(error);
   })["finally"](function (error) {
+    console.log(error);
     loadingEnd();
   });
 });
@@ -32065,80 +32069,85 @@ function fixedMessage(text) {
     $('#fixedMessage').removeClass('js-open');
   }, 5000);
 }
-/*dbから情報を引っぱって、それを非同期更新したいときに使う関数*/
 
+function reflesh_showcaseItem(message, reload_order) {
+  return new Promise(function (callback) {
+    setTimeout(function () {
+      var url = ""; //reload_orderの値に応じてリフレッシュ時に呼び出す情報を切り替える
 
-function ajaxReload(message, reload_order) {
-  var url = ""; //reload_orderの値に応じてリフレッシュ時に呼び出す情報を切り替える
+      if (reload_order === "showcase") {
+        var url = "/ajaxgetdata";
+      } else if (reload_order === "memory") {
+        var url = "/get_memory";
+      } else {}
 
-  if (reload_order === "showcase") {
-    var url = "/ajaxgetdata";
-  } else if (reload_order === "memory") {
-    var url = "/get_memory";
-  } else {}
-
-  var user_id = $("#current_status").data("user_id");
-  var showcase_name = $("#current_status").data("showcase_name");
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-  var jqxhr;
-
-  if (jqxhr) {
-    jqxhr.abort();
-  }
-
-  $.ajax({
-    type: 'POST',
-    data: {
-      user_id: user_id,
-      showcase_name: showcase_name
-    },
-    url: url,
-    dataType: 'json'
-  }).done(function (data) {
-    var count = data[0].length;
-    var output = "";
-
-    if ($(".muuri").length) {
-      var removeGridItems = grid.remove(grid.getItems(), {
-        removeElements: true
+      var user_id = $("#current_status").data("user_id");
+      var showcase_name = $("#current_status").data("showcase_name");
+      $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
       });
-    }
+      var jqxhr;
 
-    for (var i = 0; i < count; i++) {
-      var additional_item = document.createElement('div');
-      additional_item.className = 'p-table_block__tr --cell';
-      additional_item.dataset.id = data[0][i]['id'];
-      /*挿入するDOMの内容を指定*/
-
-      var image_url = data[0][i]['image_path'] == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/" + data[0][i]['image_path'];
-      additional_item.innerHTML = "\n          \n            <div class=\"p-table_block__tr__wrapper js-submenu_toggle\" data-submenu_type=\"edit\">\n              <div class=\"p-table_block__image\">\n                <div class=\"p-table_block__image__wrapper\">\n                  <img src=\"".concat(image_url, "\">\n                </div>\n              </div>\n              <div class=\"p-table_block__th\">").concat(data[0][i]['title'], "</div>\n            </div>\n            <form method=\"post\" name=\"form1\" action=\"/result-delete\"><input type=\"hidden\" name=\"_token\" value=\"").concat(meta_csrf, "\">\n              <input type=\"hidden\" name=\"id\" value=\"").concat(data[0][i]['id'], "\">\n              <div class=\"el_deleteButton js-ajax_delete\" data-id=\"").concat(data[0][i]['id'], "\">\n                \n              </div>\n            </form>\n        ");
-      console.log(additional_item);
-
-      if ($(".muuri").length) {
-        grid.add(additional_item);
+      if (jqxhr) {
+        jqxhr.abort();
       }
-      /*ちょっと間置いてからmuuri.jsの再整列を行う*/
 
-      /*setTimeout(function(){
-        grid.refreshItems();
-        grid.layout(function(items, hasLayoutChanged){
-          console.log(items);
-          console.log(hasLayoutChanged);
-        });
-      }, 1000);*/
+      $.ajax({
+        type: 'POST',
+        data: {
+          user_id: user_id,
+          showcase_name: showcase_name
+        },
+        url: url,
+        dataType: 'json'
+      }).done(function (data) {
+        var count = data[0].length;
+        var output = "";
 
-    } //$('#users_list_book').html(output);
+        if ($(".muuri").length) {
+          var removeGridItems = grid.remove(grid.getItems(), {
+            removeElements: true
+          });
+        }
+
+        for (var i = 0; i < count; i++) {
+          var additional_item = document.createElement('div');
+          additional_item.className = 'p-table_block__tr --cell';
+          additional_item.dataset.id = data[0][i]['id'];
+          /*挿入するDOMの内容を指定*/
+
+          var image_url = data[0][i]['image_path'] == "notset" ? "/image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/" + data[0][i]['image_path'];
+          additional_item.innerHTML = "\n            \n              <div class=\"p-table_block__tr__wrapper js-submenu_toggle\" data-submenu_type=\"edit\">\n                <div class=\"p-table_block__image\">\n                  <div class=\"p-table_block__image__wrapper\">\n                    <img src=\"".concat(image_url, "\">\n                  </div>\n                </div>\n                <div class=\"p-table_block__th\">").concat(data[0][i]['title'], "</div>\n              </div>\n              <form method=\"post\" name=\"form1\" action=\"/result-delete\"><input type=\"hidden\" name=\"_token\" value=\"").concat(meta_csrf, "\">\n                <input type=\"hidden\" name=\"id\" value=\"").concat(data[0][i]['id'], "\">\n                <div class=\"el_deleteButton js-ajax_delete\" data-id=\"").concat(data[0][i]['id'], "\">\n                  \n                </div>\n              </form>\n          ");
+          console.log(additional_item);
+
+          if ($(".muuri").length) {
+            grid.add(additional_item);
+          }
+          /*ちょっと間置いてからmuuri.jsの再整列を行う*/
+
+          /*setTimeout(function(){
+            grid.refreshItems();
+            grid.layout(function(items, hasLayoutChanged){
+              console.log(items);
+              console.log(hasLayoutChanged);
+            });
+          }, 1000);*/
+
+        } //$('#users_list_book').html(output);
 
 
-    fixedMessage(message);
-  }).fail(function (data) {
-    console.log('error happend');
-    console.log(data);
-  }).always(function (data) {// ...
+        if (message) {
+          fixedMessage(message);
+        }
+      }).fail(function (data) {
+        console.log('error happend');
+        console.log(data);
+      }).always(function (data) {
+        callback(data);
+      });
+    }, 0);
   });
 } //muuri.js適用下のメインエリアに要素を追加する関数
 
@@ -32192,7 +32201,7 @@ function ajaxSetter(url, form, ary_lists, reload_order) {
         console.log("データベースへの追加が成功しました");
         form.reset(); //処理が終わったフォームの入力内容をクリア
 
-        ajaxReload(ary_lists.message, reload_order);
+        reflesh_showcaseItem(ary_lists.message, reload_order);
 
         if ($("#dashboard").length) {
           reflesh_showcases();
@@ -32233,9 +32242,9 @@ function ajaxRemover(directly, target, id_get) {
     //location.reload();
     if ($("#dashboard").length) {
       reflesh_showcases();
-      ajaxReload('メモリーを削除しました！', 'showcase');
+      reflesh_showcaseItem('メモリーを削除しました！', 'showcase');
     } else {
-      ajaxReload('メモリーを削除しました！', 'memory');
+      reflesh_showcaseItem('メモリーを削除しました！', 'memory');
     }
   }).fail(function (data) {
     console.log('error happend');
@@ -32272,11 +32281,11 @@ function ajaxGetter(directly, target) {
     console.log('error happend');
   }).always(function (data) {// ...
   }); //console.log(jqxhr);
-} //詳細情報個所を再描画する
+} //Showcase_itemの詳細情報のリライト
 
 
 function rewriteDetailData(data) {
-  var image_url = data[0][0]['image_path'] == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/" + data[0][0]['image_path'];
+  var image_url = data[0][0]['image_path'] == "notset" ? "/image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/" + data[0][0]['image_path'];
   $('#detail-ttl').val(data[0][0]['title']);
   $('#detail-desc').val(data[0][0]['memo']);
   $('#dropzone2 .bl_imageDrop_icon').remove();
@@ -32721,7 +32730,30 @@ $(function () {
     }
   });*/
   //function filtered_search_button()
-});
+}); //更新時や再読み込み時など、ページの内容を更新したい場合に
+
+function pageReflesh() {
+  if (document.getElementById('dashboard')) {
+    loadingStart();
+    reflesh_showcases().then(function (data) {
+      loadingEnd();
+    });
+  } else if (document.getElementById('showcase_detail')) {
+    loadingStart(); //console.log('mudada');
+
+    reflesh_showcaseItem('', 'memory').then(function (data) {
+      loadingEnd();
+    });
+  }
+}
+
+pageReflesh(); //ブラウザバック時に強制再読み込みする
+
+window.onpageshow = function (event) {
+  if (event.persisted) {
+    console.log('orara');
+  }
+};
 
 /***/ }),
 

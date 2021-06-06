@@ -15,7 +15,7 @@ class AddShowcaseIdToShowcaseItemsTable extends Migration
     {
         Schema::table('showcase_items', function (Blueprint $table) {
             $table->integer('showcase_id')->unsigned()->default(1);
-            $table->foreign('showcase_id')->references('id')->on('users');
+            $table->foreign('showcase_id')->references('id')->on('showcases');
         });
     }
 

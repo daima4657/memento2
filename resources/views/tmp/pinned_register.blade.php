@@ -174,6 +174,7 @@
 			<div class="p-side_area__inner">
 				{{-- CSRF対策 --}}
 				<input type="hidden" name="_token" value="{{csrf_token()}}">
+				<input type="hidden" name="showcase_name" value="{{$showcase_title}}">
 				<div class="bl_formBlock">
 					<div class="p-side_area__role">
 						Add new item

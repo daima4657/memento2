@@ -30,6 +30,10 @@ class HomeController extends Controller
         $showcases->toArray();
 
 
-        return view('dashboard',compact('showcases'));
+        return response(view('dashboard',compact('showcases'))
+            ->withHeaders([
+                'Cache-Control' => 'no-store',
+            ])
+          );
     }
 }

@@ -228,7 +228,24 @@ class FormController extends Controller {
 
 
       $showcase_items->userid = Auth::id();// 現在認証されているユーザーの代入
-      $showcase_items->showcase_id = 1;// 所属するショーケースのID
+
+
+      #ShowcaseカラムからタイトルとユーザーIDを利用して呼び出すショーケースのIDを取得する
+      $showcases = Showcase::where([
+        ['name', $request->showcase_name],
+        ['user_id',Auth::id()]
+      ])->get();
+
+      #LaravelのCollectionで指定した列の情報のみを再取得する
+      $showcase_subset = $showcases->map(function($showcase){
+        return collect($showcase->toArray())
+          ->only(['id'])
+          ->all();
+      });
+
+      
+
+      $showcase_items->showcase_id = $showcase_subset[0]['id'];// 所属するショーケースのID
       #Bookモデルクラスのsaveメソッドを実行
       $showcase_items->save();
 

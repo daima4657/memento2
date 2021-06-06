@@ -8,7 +8,7 @@
 
 									<?php
 									
-									$loop_limit = count($showcase_items);
+									/*$loop_limit = count($showcase_items);
 									for($i = 0; $i < $loop_limit; $i++){
 										$image = $showcase_items[$i]->image_path == "notset" ? "image/noimage.jpg" : "https://daima-test.s3-ap-northeast-1.amazonaws.com/bookimage/".$showcase_items[$i]->image_path;
 
@@ -42,7 +42,7 @@
 
 									 <?php
 									 echo '</div>';
-									}
+									}*/
 									?>
 
 								</div>
