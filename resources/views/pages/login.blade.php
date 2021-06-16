@@ -1,7 +1,9 @@
 {{-- 子テンプレート --}}
 {{-- resources/views/pages/register.blade.php --}}
 @extends('layouts.greeting')
-@section('title', 'ログインページ')
+@php
+$title = 'Login';
+@endphp
 @section('content')
  
  
