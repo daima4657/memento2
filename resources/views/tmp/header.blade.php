@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-	
+
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6VBCKBSFXT"></script>
 <script>
@@ -24,10 +24,12 @@
 
 
 	<title>
-	@if(isset( $page_title ))
-	{{$title}}
+	@if(isset( $title ))
+	{{$title}} | {{ config('app.name', 'Laravel') }}
+	@else
+	{{ config('app.name', 'Laravel') }}
 	@endif
-	{{ config('app.name', 'Laravel') }}</title>
+	</title>
 
 	<!-- Styles -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
@@ -45,7 +47,6 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<script src="https://kit.fontawesome.com/7fd5f1a720.js" crossorigin="anonymous"></script>
 </head>
-
   <!-- Branding Image -->
   <!--<a class="navbar-brand" href="{{ url('/') }}">-->
   <a class="el_headerLogo" href="{{ url('/') }}">

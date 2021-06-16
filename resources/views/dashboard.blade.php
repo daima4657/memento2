@@ -15,7 +15,7 @@ Tamplate location : home.blade.php
 $user_name = Auth::user();
 $user = Auth::user();
 $id = Auth::id();
-$title = 'ダッシュボード | ';
+$title = 'ダッシュボード';
 $page_title = "Dashboard";
 $slug = "dashboard";
 @endphp

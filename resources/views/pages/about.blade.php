@@ -1,7 +1,9 @@
-@extends('layouts.page_template')
+
 @section('title', ' | MEMENTOについて')
 @section('slug', 'about')
 @section('content')
+<?php $title = 'MEMENTOについて'; ?>
+@extends('layouts.page_template')
 
 	<main class="p-main">
 		<div class="p-page_hero">

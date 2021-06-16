@@ -17,7 +17,7 @@ Tamplate location : pages/list.blade.php
 $user_name = Auth::user();
 $user = Auth::user();
 $id = Auth::id();
-$title = $user->name.'さんのショーケース | ';
+$title = $user->name.'さんのショーケース';
 $page_title = "Showcase";
 $slug = "showcase_detail";
 @endphp
