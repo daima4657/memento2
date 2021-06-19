@@ -89,7 +89,7 @@
 
 
 					@if ($slug === 'dashboard')
-					<div class="p-button js-create_showcase_button">Apply</div><!--ajaxで送信-->
+					<div class="p-button js-create_showcase_button">SEND</div><!--ajaxで送信-->
 					@endif
 					<!--<input type="submit" value="送信する">-->
 					<!--<input type="submit" value="更新する">-->
@@ -212,7 +212,7 @@
 					</div>
 
 
-					<div class="p-button js-ajax_button">Apply</div><!--ajaxで送信-->
+					<div class="p-button js-ajax_button">SEND</div><!--ajaxで送信-->
 
 					<!--<input type="submit" value="送信する">-->
 					<!--<input type="submit" value="更新する">-->
