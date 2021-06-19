@@ -8,7 +8,7 @@
             /*@import url('https://fonts.googleapis.com/css?family=Abel');*/
 
 
-            
+
         </style>
 
         <div class="flex-center position-ref full-height">
@@ -30,13 +30,16 @@
                     <p class="el_indexHeroSubText">keep your memory</p>
                 </div>
 
-                <div class="links">
-                    <a href="http://spreadsheep.net/">Developper</a>
-                    <!--<a href="/console">Console</a>-->
-                    <!--<a href="https://laracasts.com">Laracasts</a>-->
-                    <a href="{{ url('/about') }}">About memento</a>
-                    <!--<a href="https://forge.laravel.com">Forge</a>-->
-                    <a href="https://github.com/daima4657/memento">GitHub</a>
+                <div class="p-index_menu">
+                  <div class="p-index_menu__item">
+                    <a class="__link" href="http://spreadsheep.net/">Developper</a>
+                  </div>
+                  <div class="p-index_menu__item">
+                    <a class="__link" href="{{ url('/about') }}">About memento</a>
+                  </div>
+                  <div class="p-index_menu__item">
+                    <a class="__link" href="https://github.com/daima4657/memento">GitHub</a>
+                  </div>
                 </div>
             </div>
         </div>

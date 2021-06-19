@@ -752,7 +752,8 @@ html, body {
     padding: 40px 0 80px;
     box-sizing: border-box;
     @media screen and (max-width: 840px){
-    	padding: 180px 0 80px;
+    	width: 100%;
+    	padding: 40px 0 80px;
     }
 }
 
@@ -760,7 +761,7 @@ html, body {
     font-size: 84px;
     margin-bottom: 80px;
     @media screen and (max-width: 840px){
-    	margin-bottom: 120px;
+    	margin-bottom: 60px;
     }
 }
 
@@ -788,6 +789,7 @@ html, body {
     font-weight: bold;
     @media screen and (max-width: 840px){
     	font-size: 46px;
+    	margin-bottom: 20px;
     }
 }
 .el_indexHeroText:after{
@@ -799,6 +801,9 @@ html, body {
     width: 40px;
     height: 1px;
     background-color: #1a3144;
+    @media screen and (max-width: 840px){
+    	bottom: -5px;
+    }
 }
 .el_indexHeroSubText{
     font-size: 16px;
@@ -815,7 +820,8 @@ html, body {
     width: 100%;
     max-width: 180px;
     @media screen and (max-width: 840px){
-    	width: 30%;
+    	width: 28%;
+    	margin: 20px 0 25px;
     }
 }
 
@@ -1592,4 +1598,31 @@ body.is-submenu_active .p-side_area.__docs_add{
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%,-50%)
+}
+
+.p-index_menu{
+	display: flex;
+	@media screen and (max-width: 840px){
+		display: block;
+	}
+}
+
+.p-index_menu__item{
+  color: #636b6f;
+  padding: 0 25px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  @media screen and (max-width: 840px){
+  	display: block;
+  	margin-bottom: 10px;
+  	&:last-child{
+  		margin-bottom: 0;
+  	}
+  }
+	&:last-child{
+		margin-right: 0;
+	}
 }
