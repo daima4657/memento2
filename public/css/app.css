@@ -1513,6 +1513,12 @@ body a.btn-link {
   margin-bottom: 120px;
 }
 
+@media screen and (max-width: 840px) {
+  .p-docs {
+    padding-top: 40px;
+  }
+}
+
 .p-docs__inner {
   width: 80%;
   margin-left: auto;
@@ -1598,6 +1604,13 @@ body a.btn-link {
   width: 56px;
   height: 56px;
   background-color: #3097d1;
+}
+
+@media screen and (max-width: 840px) {
+  .p-docs_add {
+    right: 8px;
+    bottom: 8px;
+  }
 }
 
 .p-docs_add:before {

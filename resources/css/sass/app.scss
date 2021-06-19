@@ -1432,6 +1432,9 @@ z-index: 2;
 
 .p-docs{
   margin-bottom: 120px;
+  @media screen and (max-width: 840px){
+  	padding-top: 40px;
+  }
 }
 
 .p-docs__inner{
@@ -1516,6 +1519,10 @@ z-index: 2;
   width: 56px;
   height: 56px;
   background-color: #3097d1;
+  @media screen and (max-width: 840px){
+  	right: 8px;
+  	bottom: 8px;
+  }
   &:before{
     content:"";
     content: "";
